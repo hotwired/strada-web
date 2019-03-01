@@ -5,6 +5,7 @@
   class NativeBridge {
     constructor() {
       this.supportedComponents = []
+      document.addEventListener("web-bridge:ready", () => this.webBridge.setAdapter(this))
     }
 
     register(component) {
@@ -26,7 +27,7 @@
     }
 
     notifyBridgeOfSupportedComponentsUpdate() {
-      Bridge.adapterDidUpdateSupportedComponents()
+      this.webBridge.adapterDidUpdateSupportedComponents()
     }
 
     supportsComponent(component) {
@@ -35,7 +36,7 @@
 
     // Send message to web
     send(message) {
-      window.WebBridge.receive(message)
+      this.webBridge.receive(message)
     }
 
     // Receive from web
@@ -52,6 +53,11 @@
     postMessage(message) {
       webkit.messageHandlers.strata.postMessage(message)
     }
+
+    // Web bridge global
+    get webBridge() {
+      return window.WebBridge
+    }
   }
 
   const bridge = new NativeBridge()
@@ -59,8 +65,4 @@
 
   // Let the app know once the global has been set
   bridge.postMessage("ready")
-
-  document.addEventListener("web-bridge:ready", () => {
-    window.WebBridge.setAdapter(appBridge)
-  })
 })()
