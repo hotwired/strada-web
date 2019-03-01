@@ -27,7 +27,9 @@
     }
 
     notifyBridgeOfSupportedComponentsUpdate() {
-      this.webBridge.adapterDidUpdateSupportedComponents()
+      if (this.webBridge) {
+        this.webBridge.adapterDidUpdateSupportedComponents()
+      }
     }
 
     supportsComponent(component) {
@@ -36,7 +38,9 @@
 
     // Send message to web
     send(message) {
-      this.webBridge.receive(message)
+      if (this.webBridge) {
+        this.webBridge.receive(message)
+      }
     }
 
     // Receive from web
