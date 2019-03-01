@@ -32,19 +32,21 @@ public struct Message {
         self.data = data
     }
     
-    func toJSON() -> [String: Any] {
-        return ["id": id, "component": component, "event": event, "data": data]
-    }
-    
-    func replacing(data updatedData: [String: Any]) -> Message {
+    public func replacing(data updatedData: [String: Any]) -> Message {
         return Message(id: id, component: component, event: event, data: updatedData)
     }
     
-    func merging(data updatedData: [String: Any]) -> Message {
+    public func merging(data updatedData: [String: Any]) -> Message {
         var mergedData = data
         updatedData.forEach { mergedData[$0] = $1 }
         
         return Message(id: id, component: component, event: event, data: mergedData)
+    }
+    
+    // MARK: JSON
+    
+    func toJSON() -> [String: Any] {
+        return ["id": id, "component": component, "event": event, "data": data]
     }
 }
 
