@@ -13,6 +13,12 @@ public protocol BridgeDelegate: class {
     func bridgeDidReceiveMessage(_ message: Message)
 }
 
+// This needs to match whatever is set in strata.js
+private let bridgeGlobal = "window.NativeBridge"
+
+// webkit.messageHandlers.strata
+private let bridgeHandlerName = "strata"
+
 public class Bridge: NSObject {
     public weak var delegate: BridgeDelegate?
     public var webView: WKWebView?
@@ -51,7 +57,7 @@ public class Bridge: NSObject {
         
         // Install user script and message handlers in web view
         configuration.userContentController.addUserScript(userScript)
-        configuration.userContentController.add(self, name: "strata")
+        configuration.userContentController.add(self, name: bridgeHandlerName)
     }
     
     private func userScript() -> WKUserScript? {
@@ -75,11 +81,11 @@ public class Bridge: NSObject {
     }
     
     private func generateJavaScript(bridgeFunction function: String, argument: Any) -> String? {
-        return generateJavaScript(function: "appBridge.\(function)", arguments: [argument])
+        return generateJavaScript(bridgeFunction: function, arguments: [argument])
     }
     
     private func generateJavaScript(bridgeFunction function: String, arguments: [Any] = []) -> String? {
-        return generateJavaScript(function: "appBridge.\(function)", arguments: arguments)
+        return generateJavaScript(function: "\(bridgeGlobal).\(function)", arguments: arguments)
     }
     
     private func generateJavaScript(function: String, arguments: [Any] = []) -> String? {
