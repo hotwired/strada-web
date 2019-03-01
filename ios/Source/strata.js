@@ -54,7 +54,11 @@
     }
   }
 
-  window.NativeBridge = new NativeBridge()
+  const bridge = new NativeBridge()
+  window.NativeBridge = bridge
+
+  // Let the app know once the global has been set
+  bridge.postMessage("ready")
 
   document.addEventListener("web-bridge:ready", () => {
     window.WebBridge.setAdapter(appBridge)

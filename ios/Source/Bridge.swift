@@ -10,6 +10,7 @@ import Foundation
 import WebKit
 
 public protocol BridgeDelegate: class {
+    func bridgeDidInitialize()
     func bridgeDidReceiveMessage(_ message: Message)
 }
 
@@ -115,7 +116,12 @@ public class Bridge: NSObject {
 
 extension Bridge: WKScriptMessageHandler {
     public func userContentController(_ userContentController: WKUserContentController, didReceive scriptMessage: WKScriptMessage) {
-        guard let message = Message(scriptMessage: scriptMessage) else { return }
-        delegate?.bridgeDidReceiveMessage(message)
+        if let event = scriptMessage.body as? String, event == "ready" {
+            delegate?.bridgeDidInitialize()
+        } else if let message = Message(scriptMessage: scriptMessage) {
+            delegate?.bridgeDidReceiveMessage(message)
+        } else {
+            print("[bridge] unhandled message received: \(scriptMessage.body)")
+        }
     }
 }
