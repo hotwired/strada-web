@@ -14,7 +14,7 @@
         this.supportedComponents.push(component)
       }
 
-      this.notifyBridgeOfSupportedEventsUpdate()
+      this.notifyBridgeOfSupportedComponentsUpdate()
     }
 
     unregister(component) {
