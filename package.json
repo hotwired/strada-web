@@ -1,0 +1,21 @@
+{
+  "name": "strata",
+  "version": "0.1.0",
+  "main": "web/dist/strata.js",
+  "files": [
+    "web/dist"
+  ],
+  "repository": "git@github.com:basecamp/strata.git",
+  "author": "Zach Waugh <zwaugh@gmail.com>",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "clean": "rm -fr web/build",
+    "build": "tsc -b web/tsconfig.json && rollup -c web/rollup.config.js"
+  },
+  "devDependencies": {
+    "rollup": "^1.4.0",
+    "rollup-plugin-typescript2": "^0.19.3",
+    "typescript": "^3.3.3333"
+  }
+}
