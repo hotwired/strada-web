@@ -10,8 +10,8 @@ Copyright © 2019 Basecamp, LLC
   var default_1 = (function () {
       function default_1() {
           this.adapter = null;
-          this.messageId = 0;
-          this.handlers = {};
+          this.lastMessageId = 0;
+          this.pendingCallbacks = new Map();
       }
       default_1.prototype.start = function () {
           this.notifyApplicationAfterStart();
@@ -34,28 +34,27 @@ Copyright © 2019 Basecamp, LLC
           var message = { id: id, component: component, event: event, data: data || {} };
           this.adapter.receive(message);
           if (callback) {
-              this.handlers[id] = callback;
+              this.pendingCallbacks.set(id, callback);
           }
-          return message;
+          return id;
       };
       default_1.prototype.receive = function (message) {
-          this.executeHandlerFor(message);
-          this.removeHandlerFor(message);
+          this.executeCallbackFor(message);
+          this.removeCallbackFor(message.id);
       };
-      default_1.prototype.executeHandlerFor = function (message) {
-          var handler = this.handlers[message.id];
-          if (handler) {
-              handler(message);
+      default_1.prototype.executeCallbackFor = function (message) {
+          if (this.pendingCallbacks.has(message.id)) {
+              var callback = this.pendingCallbacks.get(message.id);
+              callback(message);
           }
       };
-      default_1.prototype.removeHandlerFor = function (message) {
-          var handler = this.handlers[message.id];
-          if (handler) {
-              delete this.handlers[message.id];
+      default_1.prototype.removeCallbackFor = function (messageId) {
+          if (this.pendingCallbacks.has(messageId)) {
+              this.pendingCallbacks["delete"](messageId);
           }
       };
       default_1.prototype.generateMessageId = function () {
-          var id = ++this.messageId;
+          var id = ++this.lastMessageId;
           return id.toString();
       };
       default_1.prototype.setAdapter = function (adapter) {
@@ -70,7 +69,7 @@ Copyright © 2019 Basecamp, LLC
   }());
 
   var bridge = new default_1();
-  window.WebBridge = bridge;
+  window.webBridge = bridge;
   bridge.start();
 
 }));

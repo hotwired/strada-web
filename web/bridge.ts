@@ -1,15 +1,18 @@
 import { Adapter } from "./adapter"
 import { Message } from "./message"
 
+type MessageCallback = (message: Message) => void
+type MessageId = string
+
 export default class {
   private adapter: Adapter
-  private messageId: number
-  private handlers: object
+  private lastMessageId: number
+  private pendingCallbacks: Map<MessageId, MessageCallback>
 
   constructor() {
     this.adapter = null
-    this.messageId = 0
-    this.handlers = {}
+    this.lastMessageId = 0
+    this.pendingCallbacks = new Map()
   }
 
   start() {
@@ -28,7 +31,7 @@ export default class {
     }
   }
 
-  send(component: string, event: string, data: object, callback: (message: Message) => void): Message | null {
+  send(component: string, event: string, data: object, callback: MessageCallback): MessageId | null {
     if (!this.supportsComponent(component)) return null
 
     const id = this.generateMessageId()
@@ -36,33 +39,32 @@ export default class {
     this.adapter.receive(message)
 
     if (callback) {
-      this.handlers[id] = callback
+      this.pendingCallbacks.set(id, callback)
     }
 
-    return message
+    return id
   }
 
   receive(message: Message) {
-    this.executeHandlerFor(message)
-    this.removeHandlerFor(message)
+    this.executeCallbackFor(message)
+    this.removeCallbackFor(message.id)
   }
 
-  executeHandlerFor(message: Message) {
-    const handler = this.handlers[message.id]
-    if (handler) {
-      handler(message)
+  executeCallbackFor(message: Message) {
+    if (this.pendingCallbacks.has(message.id)) {
+      const callback = this.pendingCallbacks.get(message.id)
+      callback(message)
     }
   }
 
-  removeHandlerFor(message: Message) {
-    const handler = this.handlers[message.id]
-    if (handler) {
-      delete this.handlers[message.id]
+  removeCallbackFor(messageId: MessageId) {
+    if (this.pendingCallbacks.has(messageId)) {
+      this.pendingCallbacks.delete(messageId)
     }
   }
 
-  generateMessageId(): string {
-    const id = ++this.messageId
+  generateMessageId(): MessageId {
+    const id = ++this.lastMessageId
     return id.toString()
   }
 

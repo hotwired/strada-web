@@ -2,10 +2,10 @@ import Bridge from "./bridge"
 
 declare global {
   interface Window {
-    WebBridge: Bridge
+    webBridge: Bridge
   }
 }
 
 const bridge = new Bridge()
-window.WebBridge = bridge
+window.webBridge = bridge
 bridge.start()
