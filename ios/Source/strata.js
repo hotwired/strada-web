@@ -1,11 +1,11 @@
 (() => {
-  // This represents the adapter that is installed on the WebBridge
+  // This represents the adapter that is installed on the webBridge
   // All adapters implement the same interface so the web doesn't need to
   // know anything specific about the client platform
   class NativeBridge {
     constructor() {
       this.supportedComponents = []
-      document.addEventListener("web-bridge:ready", () => this.webBridge.setAdapter(this))
+      document.addEventListener("web-bridge:ready", () => window.webBridge.setAdapter(this))
     }
 
     register(component) {
@@ -27,8 +27,8 @@
     }
 
     notifyBridgeOfSupportedComponentsUpdate() {
-      if (this.webBridge) {
-        this.webBridge.adapterDidUpdateSupportedComponents()
+      if (window.webBridge) {
+        window.webBridge.adapterDidUpdateSupportedComponents()
       }
     }
 
@@ -38,8 +38,8 @@
 
     // Send message to web
     send(message) {
-      if (this.webBridge) {
-        this.webBridge.receive(message)
+      if (window.webBridge) {
+        window.webBridge.receive(message)
       }
     }
 
@@ -57,16 +57,8 @@
     postMessage(message) {
       webkit.messageHandlers.strata.postMessage(message)
     }
-
-    // Web bridge global
-    get webBridge() {
-      return window.WebBridge
-    }
   }
 
-  const bridge = new NativeBridge()
-  window.NativeBridge = bridge
-
-  // Let the app know once the global has been set
-  bridge.postMessage("ready")
+  window.nativeBridge = new NativeBridge()
+  window.nativeBridge.postMessage("ready")
 })()
