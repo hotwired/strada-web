@@ -40,7 +40,6 @@ Copyright © 2019 Basecamp, LLC
       };
       default_1.prototype.receive = function (message) {
           this.executeCallbackFor(message);
-          this.removeCallbackFor(message.id);
       };
       default_1.prototype.executeCallbackFor = function (message) {
           if (this.pendingCallbacks.has(message.id)) {

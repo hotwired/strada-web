@@ -47,7 +47,6 @@ export default class {
 
   receive(message: Message) {
     this.executeCallbackFor(message)
-    this.removeCallbackFor(message.id)
   }
 
   executeCallbackFor(message: Message) {
