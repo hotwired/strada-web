@@ -14,8 +14,14 @@ private const val bridgeGlobal = "window.nativeBridge"
 private const val bridgeJavascriptInterface = "Strata"
 
 @Suppress("unused")
-class Bridge(var webView: WebView? = null, var delegate: BridgeDelegate? = null) {
+class Bridge(val webView: WebView) {
     internal var repository = Repository()
+    var delegate: BridgeDelegate? = null
+
+    init {
+        // The JavascriptInterface must be added before the page is loaded
+        webView.addJavascriptInterface(this, bridgeJavascriptInterface)
+    }
 
     fun register(component: String) {
         register(listOf(component))
@@ -37,8 +43,6 @@ class Bridge(var webView: WebView? = null, var delegate: BridgeDelegate? = null)
     }
 
     fun load() {
-        val webView = requireNotNull(webView) { "WebView must be provided to load strata.js" }
-        webView.addJavascriptInterface(this, bridgeJavascriptInterface)
         evaluate(userScript())
     }
 
@@ -65,7 +69,7 @@ class Bridge(var webView: WebView? = null, var delegate: BridgeDelegate? = null)
 
     internal fun evaluate(javascript: String) {
         log("evaluating $javascript")
-        webView?.evaluateJavascript(javascript) { result ->
+        webView.evaluateJavascript(javascript) { result ->
             log("javascript result: $result")
         }
     }

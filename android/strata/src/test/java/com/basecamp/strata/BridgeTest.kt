@@ -20,7 +20,8 @@ class BridgeTest {
 
     @Before
     fun setup() {
-        bridge = Bridge(webView, delegate)
+        bridge = Bridge(webView)
+        bridge.delegate = delegate
         bridge.repository = repository
     }
 
