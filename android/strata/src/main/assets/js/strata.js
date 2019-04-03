@@ -43,7 +43,7 @@
     // Send message to web
     send(message) {
       if (window.webBridge) {
-        window.webBridge.receive(message)
+        window.webBridge.receive(JSON.parse(message))
       }
     }
 
