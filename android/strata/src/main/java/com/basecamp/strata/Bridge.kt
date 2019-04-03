@@ -24,7 +24,8 @@ class Bridge(val webView: WebView) {
     }
 
     fun register(component: String) {
-        register(listOf(component))
+        val javascript = generateJavaScript("register", component)
+        evaluate(javascript)
     }
 
     fun register(components: List<String>) {
@@ -76,13 +77,9 @@ class Bridge(val webView: WebView) {
         webView.evaluateJavascript(javascript) {}
     }
 
-    internal fun generateJavaScript(bridgeFunction: String, argument: Any): String {
-        return generateJavaScript(bridgeFunction, listOf(argument))
-    }
-
-    internal fun generateJavaScript(bridgeFunction: String, arguments: List<Any>): String {
+    internal fun generateJavaScript(bridgeFunction: String, vararg arguments: Any): String {
         val functionName = sanitizeFunctionName(bridgeFunction)
-        val encodedArguments = encode(arguments)
+        val encodedArguments = encode(arguments.toList())
         return "$bridgeGlobal.$functionName($encodedArguments)"
     }
 

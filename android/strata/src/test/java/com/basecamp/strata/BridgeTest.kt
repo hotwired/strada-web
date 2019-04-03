@@ -34,7 +34,7 @@ class BridgeTest {
 
     @Test
     fun registerComponents() {
-        val javascript = """window.nativeBridge.register("page","alert")"""
+        val javascript = """window.nativeBridge.register(["page","alert"])"""
         bridge.register(listOf("page", "alert"))
         verify(webView).evaluateJavascript(eq(javascript), any())
     }
@@ -108,19 +108,21 @@ class BridgeTest {
     @Test
     fun generateJavascript() {
         val javascript = bridge.generateJavaScript("register", "page")
-        assertEquals(javascript, """window.nativeBridge.register("page")""")
+        assertEquals("""window.nativeBridge.register("page")""", javascript)
     }
 
     @Test
     fun generateJavascriptArguments() {
         val javascript = bridge.generateJavaScript("register", listOf("page", "alert"))
-        assertEquals(javascript, """window.nativeBridge.register("page","alert")""")
+        assertEquals("""window.nativeBridge.register(["page","alert"])""", javascript)
     }
 
     @Test
     fun encode() {
+        assertEquals("\"page\"", bridge.encode(listOf("page")))
+
         val arguments = listOf("page", "alert")
-        assertEquals(bridge.encode(arguments), "\"page\",\"alert\"")
+        assertEquals("[\"page\",\"alert\"]", bridge.encode(listOf(arguments)))
     }
 
     @Test

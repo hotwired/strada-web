@@ -14,7 +14,7 @@ class MessageTest {
             data = hashMapOf("title" to "Page title")
         )
 
-        assertEquals(message.toJSON(), json)
+        assertEquals(json, message.toJSON())
     }
 
     @Test
@@ -22,9 +22,9 @@ class MessageTest {
         val json = """{"id":"1","component":"page","event":"connect","data":{"title":"Page title"}}"""
         val message = Message.fromJSON(json)
 
-        assertEquals(message?.id, "1")
-        assertEquals(message?.component, "page")
-        assertEquals(message?.event, "connect")
-        assertEquals(message?.data?.get("title"), "Page title")
+        assertEquals("1", message?.id)
+        assertEquals("page", message?.component)
+        assertEquals("connect", message?.event)
+        assertEquals("Page title", message?.data?.get("title"))
     }
 }
