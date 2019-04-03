@@ -5,7 +5,11 @@
   class NativeBridge {
     constructor() {
       this.supportedComponents = []
-      document.addEventListener("web-bridge:ready", () => window.webBridge.setAdapter(this))
+      if (window.webBridge) {
+        window.webBridge.setAdapter(this)
+      } else {
+        document.addEventListener("web-bridge:ready", () => window.webBridge.setAdapter(this))
+      }
     }
 
     register(component) {
@@ -45,7 +49,7 @@
 
     // Receive from web
     receive(message) {
-      this.postMessage(message)
+      this.postMessage(JSON.stringify(message))
     }
 
     get platform() {

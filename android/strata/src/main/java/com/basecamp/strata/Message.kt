@@ -38,6 +38,7 @@ data class Message(
             val type = object : TypeToken<Message>() {}.type
             Gson().fromJson<Message>(json, type)
         } catch (e: Exception) {
+            log("Invalid message: $json")
             null
         }
     }
