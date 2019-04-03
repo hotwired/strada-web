@@ -49,14 +49,18 @@ class Bridge(val webView: WebView) {
     @JavascriptInterface
     fun bridgeDidInitialize() {
         log("bridge initialized")
-        delegate?.bridgeDidInitialize()
+        runOnUiThread {
+            delegate?.bridgeDidInitialize()
+        }
     }
 
     @JavascriptInterface
     fun bridgeDidReceiveMessage(message: String?) {
         log("message received: $message")
-        Message.fromJSON(message)?.let {
-            delegate?.bridgeDidReceiveMessage(it)
+        runOnUiThread {
+            Message.fromJSON(message)?.let {
+                delegate?.bridgeDidReceiveMessage(it)
+            }
         }
     }
 
@@ -69,9 +73,7 @@ class Bridge(val webView: WebView) {
 
     internal fun evaluate(javascript: String) {
         log("evaluating $javascript")
-        webView.evaluateJavascript(javascript) { result ->
-            log("javascript result: $result")
-        }
+        webView.evaluateJavascript(javascript) {}
     }
 
     internal fun generateJavaScript(bridgeFunction: String, argument: Any): String {
