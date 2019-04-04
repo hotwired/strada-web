@@ -6,6 +6,15 @@ import com.google.gson.reflect.TypeToken
 
 typealias MessageData = HashMap<String, Any>
 
+/**
+ * Convenience function to clear the current data
+ * entries and add the provided Pair entries.
+ */
+fun MessageData.set(vararg entries: Pair<String, Any>) = apply {
+    clear()
+    entries.forEach { put(it.first, it.second) }
+}
+
 data class Message(
     /**
      * A unique identifier for this message. You can reply to messages by sending
