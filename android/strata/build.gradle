@@ -2,6 +2,8 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-android'
 
+ext.artifact_version = "0.1"
+
 android {
     compileSdkVersion 28
 
@@ -9,7 +11,7 @@ android {
         minSdkVersion 23
         targetSdkVersion 28
         versionCode 1
-        versionName "1.0"
+        versionName artifact_version
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -46,6 +48,22 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.1.0")
     androidTestImplementation("androidx.test:runner:1.1.1")
 }
+
 repositories {
     mavenCentral()
+}
+
+// Allow GitHub private library hosting
+apply plugin: 'maven'
+
+uploadArchives {
+    repositories.mavenDeployer {
+        def deployPath = file("artifacts")
+        repository(url: "file://${deployPath.absolutePath}")
+        pom.project {
+            groupId 'com.basecamp'
+            artifactId 'strata'
+            version artifact_version
+        }
+    }
 }
