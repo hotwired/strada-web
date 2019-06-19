@@ -75,7 +75,7 @@ Then, include the Strata dependency in your `app/build.gradle` file using the `a
 
 ```groovy
 dependencies {
-  implementation 'com.basecamp:strata:0.1@aar'
+  implementation 'com.basecamp:strata:0.1'
 }
 ```
 
