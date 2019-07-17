@@ -11,6 +11,7 @@ Copyright © 2019 Basecamp, LLC
       function default_1() {
           this.adapter = null;
           this.lastMessageId = 0;
+          this.pendingMessages = [];
           this.pendingCallbacks = new Map();
       }
       default_1.prototype.start = function () {
@@ -28,6 +29,11 @@ Copyright © 2019 Basecamp, LLC
           }
       };
       default_1.prototype.send = function (component, event, data, callback) {
+          if (!this.adapter) {
+              var message_1 = [component, event, data, callback];
+              this.pendingMessages.push(message_1);
+              return;
+          }
           if (!this.supportsComponent(component))
               return null;
           var id = this.generateMessageId();
@@ -60,9 +66,15 @@ Copyright © 2019 Basecamp, LLC
           this.adapter = adapter;
           document.documentElement.dataset.bridgePlatform = this.adapter.platform;
           this.adapterDidUpdateSupportedComponents();
+          this.sendPendingMessages();
       };
       default_1.prototype.adapterDidUpdateSupportedComponents = function () {
           document.documentElement.dataset.bridgeComponents = this.adapter.supportedComponents.join(" ");
+      };
+      default_1.prototype.sendPendingMessages = function () {
+          var _this = this;
+          this.pendingMessages.forEach(function (message) { return _this.send.apply(_this, message); });
+          this.pendingMessages = [];
       };
       return default_1;
   }());

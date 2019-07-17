@@ -3,15 +3,18 @@ import { Message } from "./message"
 
 type MessageCallback = (message: Message) => void
 type MessageId = string
+type PendingMessage = [ string, string, object, MessageCallback ]
 
 export default class {
   private adapter: Adapter
   private lastMessageId: number
+  private pendingMessages: Array<PendingMessage>
   private pendingCallbacks: Map<MessageId, MessageCallback>
 
   constructor() {
     this.adapter = null
     this.lastMessageId = 0
+    this.pendingMessages = []
     this.pendingCallbacks = new Map()
   }
 
@@ -32,6 +35,11 @@ export default class {
   }
 
   send(component: string, event: string, data: object, callback: MessageCallback): MessageId | null {
+    if (!this.adapter) {
+      const message: PendingMessage = [ component, event, data, callback ]
+      this.pendingMessages.push(message)
+      return
+    }
     if (!this.supportsComponent(component)) return null
 
     const id = this.generateMessageId()
@@ -73,9 +81,15 @@ export default class {
     // Configure <html> attributes
     document.documentElement.dataset.bridgePlatform = this.adapter.platform
     this.adapterDidUpdateSupportedComponents()
+    this.sendPendingMessages()
   }
 
   adapterDidUpdateSupportedComponents() {
     document.documentElement.dataset.bridgeComponents = this.adapter.supportedComponents.join(" ")
+  }
+
+  private sendPendingMessages() {
+    this.pendingMessages.forEach(message => this.send(...message))
+    this.pendingMessages = []
   }
 }
