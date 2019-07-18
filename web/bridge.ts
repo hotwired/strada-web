@@ -3,7 +3,12 @@ import { Message } from "./message"
 
 type MessageCallback = (message: Message) => void
 type MessageId = string
-type PendingMessage = [ string, string, object, MessageCallback ]
+type PendingMessage = {
+  component: string,
+  event: string,
+  data: object,
+  callback: MessageCallback
+}
 
 export default class {
   private adapter: Adapter
@@ -26,14 +31,6 @@ export default class {
     document.dispatchEvent(new Event("web-bridge:ready"))
   }
 
-  supportedComponentsRegistered(): boolean {
-    if (this.adapter) {
-      return this.adapter.supportedComponents.length > 0
-    } else {
-      return false 
-    }
-  }
-
   supportsComponent(component: string): boolean {
     if (this.adapter) {
       return this.adapter.supportsComponent(component)
@@ -42,9 +39,9 @@ export default class {
     }
   }
 
-  send(component: string, event: string, data: object, callback: MessageCallback): MessageId | null {
-    if (!this.supportedComponentsRegistered()) {
-      this.savePendingMessage(component, event, data, callback)
+  send({ component, event, data, callback }: PendingMessage): MessageId | null {
+    if (!this.adapterReady) {
+      this.savePendingMessage({ component, event, data, callback })
       return
     }
     if (!this.supportsComponent(component)) return null
@@ -97,18 +94,21 @@ export default class {
   adapterDidUpdateSupportedComponents() {
     document.documentElement.dataset.bridgeComponents = this.adapter.supportedComponents.join(" ")
 
-    if (this.supportedComponentsRegistered()) {
+    if (this.adapterReady) {
       this.sendPendingMessages() 
     }
   }
 
-  private savePendingMessage(component: string, event: string, data: object, callback: MessageCallback) {
-    const message: PendingMessage = [ component, event, data, callback ]
+  adapterReady(): boolean {
+    return this.adapter && this.adapter.supportedComponents.length > 0
+  }
+
+  private savePendingMessage(message: PendingMessage) {
     this.pendingMessages.push(message)
   }
 
   private sendPendingMessages() {
-    this.pendingMessages.forEach(message => this.send(...message))
+    this.pendingMessages.forEach(message => this.send(message))
     this.pendingMessages = []
   }
 }
