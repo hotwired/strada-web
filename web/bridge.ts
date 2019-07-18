@@ -75,7 +75,7 @@ export default class {
   }
 
   removePendingMessagesFor(component: string) {
-    this.pendingMessages = this.pendingMessages.filter(message => message[0] != component)
+    this.pendingMessages = this.pendingMessages.filter(message => message.component != component)
   }
 
   generateMessageId(): MessageId {

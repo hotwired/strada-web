@@ -59,7 +59,7 @@ Copyright © 2019 Basecamp, LLC
           }
       };
       default_1.prototype.removePendingMessagesFor = function (component) {
-          this.pendingMessages = this.pendingMessages.filter(function (message) { return message[0] != component; });
+          this.pendingMessages = this.pendingMessages.filter(function (message) { return message.component != component; });
       };
       default_1.prototype.generateMessageId = function () {
           var id = ++this.lastMessageId;
