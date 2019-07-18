@@ -20,6 +20,14 @@ Copyright © 2019 Basecamp, LLC
       default_1.prototype.notifyApplicationAfterStart = function () {
           document.dispatchEvent(new Event("web-bridge:ready"));
       };
+      default_1.prototype.supportedComponentsRegistered = function () {
+          if (this.adapter) {
+              return this.adapter.supportedComponents.length > 0;
+          }
+          else {
+              return false;
+          }
+      };
       default_1.prototype.supportsComponent = function (component) {
           if (this.adapter) {
               return this.adapter.supportsComponent(component);
@@ -29,9 +37,8 @@ Copyright © 2019 Basecamp, LLC
           }
       };
       default_1.prototype.send = function (component, event, data, callback) {
-          if (!this.adapter) {
-              var message_1 = [component, event, data, callback];
-              this.pendingMessages.push(message_1);
+          if (!this.supportedComponentsRegistered()) {
+              this.savePendingMessage(component, event, data, callback);
               return;
           }
           if (!this.supportsComponent(component))
@@ -58,6 +65,9 @@ Copyright © 2019 Basecamp, LLC
               this.pendingCallbacks["delete"](messageId);
           }
       };
+      default_1.prototype.removePendingMessagesFor = function (component) {
+          this.pendingMessages = this.pendingMessages.filter(function (message) { return message[0] != component; });
+      };
       default_1.prototype.generateMessageId = function () {
           var id = ++this.lastMessageId;
           return id.toString();
@@ -66,10 +76,16 @@ Copyright © 2019 Basecamp, LLC
           this.adapter = adapter;
           document.documentElement.dataset.bridgePlatform = this.adapter.platform;
           this.adapterDidUpdateSupportedComponents();
-          this.sendPendingMessages();
       };
       default_1.prototype.adapterDidUpdateSupportedComponents = function () {
           document.documentElement.dataset.bridgeComponents = this.adapter.supportedComponents.join(" ");
+          if (this.supportedComponentsRegistered()) {
+              this.sendPendingMessages();
+          }
+      };
+      default_1.prototype.savePendingMessage = function (component, event, data, callback) {
+          var message = [component, event, data, callback];
+          this.pendingMessages.push(message);
       };
       default_1.prototype.sendPendingMessages = function () {
           var _this = this;

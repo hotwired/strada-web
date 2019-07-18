@@ -26,6 +26,14 @@ export default class {
     document.dispatchEvent(new Event("web-bridge:ready"))
   }
 
+  supportedComponentsRegistered(): boolean {
+    if (this.adapter) {
+      return this.adapter.supportedComponents.length > 0
+    } else {
+      return false 
+    }
+  }
+
   supportsComponent(component: string): boolean {
     if (this.adapter) {
       return this.adapter.supportsComponent(component)
@@ -35,9 +43,8 @@ export default class {
   }
 
   send(component: string, event: string, data: object, callback: MessageCallback): MessageId | null {
-    if (!this.adapter) {
-      const message: PendingMessage = [ component, event, data, callback ]
-      this.pendingMessages.push(message)
+    if (!this.supportedComponentsRegistered()) {
+      this.savePendingMessage(component, event, data, callback)
       return
     }
     if (!this.supportsComponent(component)) return null
@@ -70,6 +77,10 @@ export default class {
     }
   }
 
+  removePendingMessagesFor(component: string) {
+    this.pendingMessages = this.pendingMessages.filter(message => message[0] != component)
+  }
+
   generateMessageId(): MessageId {
     const id = ++this.lastMessageId
     return id.toString()
@@ -81,11 +92,19 @@ export default class {
     // Configure <html> attributes
     document.documentElement.dataset.bridgePlatform = this.adapter.platform
     this.adapterDidUpdateSupportedComponents()
-    this.sendPendingMessages()
   }
 
   adapterDidUpdateSupportedComponents() {
     document.documentElement.dataset.bridgeComponents = this.adapter.supportedComponents.join(" ")
+
+    if (this.supportedComponentsRegistered()) {
+      this.sendPendingMessages() 
+    }
+  }
+
+  private savePendingMessage(component: string, event: string, data: object, callback: MessageCallback) {
+    const message: PendingMessage = [ component, event, data, callback ]
+    this.pendingMessages.push(message)
   }
 
   private sendPendingMessages() {
