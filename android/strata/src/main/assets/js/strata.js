@@ -5,6 +5,7 @@
   class NativeBridge {
     constructor() {
       this.supportedComponents = []
+      this.adapterIsRegistered = false
     }
 
     register(component) {
@@ -14,7 +15,9 @@
         this.supportedComponents.push(component)
       }
 
-      this.registerAdapter()
+      if (!this.adapterIsRegistered) {
+        this.registerAdapter()
+      }
       this.notifyBridgeOfSupportedComponentsUpdate()
     }
 
@@ -27,6 +30,8 @@
     }
 
     registerAdapter() {
+      this.adapterIsRegistered = true
+
       if (window.webBridge) {
         window.webBridge.setAdapter(this)
       } else {
