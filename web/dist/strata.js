@@ -11,6 +11,7 @@ Copyright © 2019 Basecamp, LLC
       function default_1() {
           this.adapter = null;
           this.lastMessageId = 0;
+          this.pendingMessages = [];
           this.pendingCallbacks = new Map();
       }
       default_1.prototype.start = function () {
@@ -27,7 +28,12 @@ Copyright © 2019 Basecamp, LLC
               return false;
           }
       };
-      default_1.prototype.send = function (component, event, data, callback) {
+      default_1.prototype.send = function (_a) {
+          var component = _a.component, event = _a.event, data = _a.data, callback = _a.callback;
+          if (!this.adapter) {
+              this.savePendingMessage({ component: component, event: event, data: data, callback: callback });
+              return;
+          }
           if (!this.supportsComponent(component))
               return null;
           var id = this.generateMessageId();
@@ -52,6 +58,9 @@ Copyright © 2019 Basecamp, LLC
               this.pendingCallbacks["delete"](messageId);
           }
       };
+      default_1.prototype.removePendingMessagesFor = function (component) {
+          this.pendingMessages = this.pendingMessages.filter(function (message) { return message.component != component; });
+      };
       default_1.prototype.generateMessageId = function () {
           var id = ++this.lastMessageId;
           return id.toString();
@@ -60,9 +69,18 @@ Copyright © 2019 Basecamp, LLC
           this.adapter = adapter;
           document.documentElement.dataset.bridgePlatform = this.adapter.platform;
           this.adapterDidUpdateSupportedComponents();
+          this.sendPendingMessages();
       };
       default_1.prototype.adapterDidUpdateSupportedComponents = function () {
           document.documentElement.dataset.bridgeComponents = this.adapter.supportedComponents.join(" ");
+      };
+      default_1.prototype.savePendingMessage = function (message) {
+          this.pendingMessages.push(message);
+      };
+      default_1.prototype.sendPendingMessages = function () {
+          var _this = this;
+          this.pendingMessages.forEach(function (message) { return _this.send(message); });
+          this.pendingMessages = [];
       };
       return default_1;
   }());

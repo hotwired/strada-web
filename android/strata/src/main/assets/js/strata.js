@@ -5,11 +5,7 @@
   class NativeBridge {
     constructor() {
       this.supportedComponents = []
-      if (window.webBridge) {
-        window.webBridge.setAdapter(this)
-      } else {
-        document.addEventListener("web-bridge:ready", () => window.webBridge.setAdapter(this))
-      }
+      this.adapterIsRegistered = false
     }
 
     register(component) {
@@ -19,6 +15,9 @@
         this.supportedComponents.push(component)
       }
 
+      if (!this.adapterIsRegistered) {
+        this.registerAdapter()
+      }
       this.notifyBridgeOfSupportedComponentsUpdate()
     }
 
@@ -27,6 +26,16 @@
       if (index != -1) {
         this.supportedComponents.splice(index, 1)
         this.notifyBridgeOfSupportedComponentsUpdate()
+      }
+    }
+
+    registerAdapter() {
+      this.adapterIsRegistered = true
+
+      if (window.webBridge) {
+        window.webBridge.setAdapter(this)
+      } else {
+        document.addEventListener("web-bridge:ready", () => window.webBridge.setAdapter(this))
       }
     }
 

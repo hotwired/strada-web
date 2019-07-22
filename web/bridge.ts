@@ -3,15 +3,23 @@ import { Message } from "./message"
 
 type MessageCallback = (message: Message) => void
 type MessageId = string
+type PendingMessage = {
+  component: string,
+  event: string,
+  data: object,
+  callback: MessageCallback
+}
 
 export default class {
   private adapter: Adapter
   private lastMessageId: number
+  private pendingMessages: Array<PendingMessage>
   private pendingCallbacks: Map<MessageId, MessageCallback>
 
   constructor() {
     this.adapter = null
     this.lastMessageId = 0
+    this.pendingMessages = []
     this.pendingCallbacks = new Map()
   }
 
@@ -31,7 +39,11 @@ export default class {
     }
   }
 
-  send(component: string, event: string, data: object, callback: MessageCallback): MessageId | null {
+  send({ component, event, data, callback }: PendingMessage): MessageId | null {
+    if (!this.adapter) {
+      this.savePendingMessage({ component, event, data, callback })
+      return
+    }
     if (!this.supportsComponent(component)) return null
 
     const id = this.generateMessageId()
@@ -62,6 +74,10 @@ export default class {
     }
   }
 
+  removePendingMessagesFor(component: string) {
+    this.pendingMessages = this.pendingMessages.filter(message => message.component != component)
+  }
+
   generateMessageId(): MessageId {
     const id = ++this.lastMessageId
     return id.toString()
@@ -73,9 +89,19 @@ export default class {
     // Configure <html> attributes
     document.documentElement.dataset.bridgePlatform = this.adapter.platform
     this.adapterDidUpdateSupportedComponents()
+    this.sendPendingMessages()
   }
 
   adapterDidUpdateSupportedComponents() {
     document.documentElement.dataset.bridgeComponents = this.adapter.supportedComponents.join(" ")
+  }
+
+  private savePendingMessage(message: PendingMessage) {
+    this.pendingMessages.push(message)
+  }
+
+  private sendPendingMessages() {
+    this.pendingMessages.forEach(message => this.send(message))
+    this.pendingMessages = []
   }
 }
