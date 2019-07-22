@@ -40,7 +40,7 @@ export default class {
   }
 
   send({ component, event, data, callback }: PendingMessage): MessageId | null {
-    if (!this.adapterReady) {
+    if (!this.adapter) {
       this.savePendingMessage({ component, event, data, callback })
       return
     }
@@ -89,18 +89,11 @@ export default class {
     // Configure <html> attributes
     document.documentElement.dataset.bridgePlatform = this.adapter.platform
     this.adapterDidUpdateSupportedComponents()
+    this.sendPendingMessages()
   }
 
   adapterDidUpdateSupportedComponents() {
     document.documentElement.dataset.bridgeComponents = this.adapter.supportedComponents.join(" ")
-
-    if (this.adapterReady) {
-      this.sendPendingMessages() 
-    }
-  }
-
-  adapterReady(): boolean {
-    return this.adapter && this.adapter.supportedComponents.length > 0
   }
 
   private savePendingMessage(message: PendingMessage) {

@@ -30,7 +30,7 @@ Copyright © 2019 Basecamp, LLC
       };
       default_1.prototype.send = function (_a) {
           var component = _a.component, event = _a.event, data = _a.data, callback = _a.callback;
-          if (!this.adapterReady) {
+          if (!this.adapter) {
               this.savePendingMessage({ component: component, event: event, data: data, callback: callback });
               return;
           }
@@ -69,15 +69,10 @@ Copyright © 2019 Basecamp, LLC
           this.adapter = adapter;
           document.documentElement.dataset.bridgePlatform = this.adapter.platform;
           this.adapterDidUpdateSupportedComponents();
+          this.sendPendingMessages();
       };
       default_1.prototype.adapterDidUpdateSupportedComponents = function () {
           document.documentElement.dataset.bridgeComponents = this.adapter.supportedComponents.join(" ");
-          if (this.adapterReady) {
-              this.sendPendingMessages();
-          }
-      };
-      default_1.prototype.adapterReady = function () {
-          return this.adapter && this.adapter.supportedComponents.length > 0;
       };
       default_1.prototype.savePendingMessage = function (message) {
           this.pendingMessages.push(message);
