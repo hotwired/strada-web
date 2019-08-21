@@ -9,12 +9,14 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Setup
-      run: brew install hub
+      run: |
+        curl -L -O https://github.com/github/hub/releases/download/v2.12.3/hub-linux-amd64-2.12.3.tgz
+        tar xvf hub-linux-amd64-2.12.3.tgz
     - name: Build
       run: |
         yarn install
         yarn build
     - name: Release
-      run: hub release create -p -m "Dev Build / ${GITHUB_SHA}" -a web/dist/strata.js "v0.1-${GITHUB_SHA:0:7}"
+      run: ./hub-linux-amd64-2.12.3/bin/hub release create -p -m "Dev Build / ${GITHUB_SHA}" -a web/dist/strata.js "v0.1-${GITHUB_SHA:0:7}"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
