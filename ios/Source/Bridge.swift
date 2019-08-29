@@ -20,13 +20,16 @@ private let bridgeGlobal = "window.nativeBridge"
 // webkit.messageHandlers.strata
 private let bridgeHandlerName = "strata"
 
-public class Bridge: NSObject {
+public final class Bridge {
     public weak var delegate: BridgeDelegate?
     public var webView: WKWebView?
-
+    
+    deinit {
+        webView?.configuration.userContentController.removeScriptMessageHandler(forName: bridgeHandlerName)
+    }
+    
     public init(webView: WKWebView? = nil) {
         self.webView = webView
-        super.init()
     }
 
     // MARK: - API
@@ -58,7 +61,7 @@ public class Bridge: NSObject {
 
         // Install user script and message handlers in web view
         configuration.userContentController.addUserScript(userScript)
-        configuration.userContentController.add(self, name: bridgeHandlerName)
+        configuration.userContentController.add(ScriptMessageHandler(delegate: self), name: bridgeHandlerName)
     }
 
     private func userScript() -> WKUserScript? {
@@ -114,8 +117,8 @@ public class Bridge: NSObject {
     }
 }
 
-extension Bridge: WKScriptMessageHandler {
-    public func userContentController(_ userContentController: WKUserContentController, didReceive scriptMessage: WKScriptMessage) {
+extension Bridge: ScriptMessageHandlerDelegate {
+    func scriptMessageHandlerDidReceiveMessage(_ scriptMessage: WKScriptMessage) {
         if let event = scriptMessage.body as? String, event == "ready" {
             delegate?.bridgeDidInitialize()
         } else if let message = Message(scriptMessage: scriptMessage) {
@@ -123,5 +126,22 @@ extension Bridge: WKScriptMessageHandler {
         } else {
             print("[bridge] unhandled message received: \(scriptMessage.body)")
         }
+    }
+}
+
+// Avoids retain cycle caused by WKUserContentController
+protocol ScriptMessageHandlerDelegate: class {
+    func scriptMessageHandlerDidReceiveMessage(_ scriptMessage: WKScriptMessage)
+}
+
+private class ScriptMessageHandler: NSObject, WKScriptMessageHandler {
+    weak var delegate: ScriptMessageHandlerDelegate?
+    
+    init(delegate: ScriptMessageHandlerDelegate?) {
+        self.delegate = delegate
+    }
+    
+    func userContentController(_ userContentController: WKUserContentController, didReceive scriptMessage: WKScriptMessage) {
+        delegate?.scriptMessageHandlerDidReceiveMessage(scriptMessage)
     }
 }
