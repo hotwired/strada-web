@@ -14,6 +14,10 @@ public protocol BridgeDelegate: class {
     func bridgeDidReceiveMessage(_ message: Message)
 }
 
+public enum BridgeError: Error {
+    case javaScriptGenerationError
+}
+
 // This needs to match whatever is set in strata.js
 private let bridgeGlobal = "window.nativeBridge"
 
@@ -21,6 +25,8 @@ private let bridgeGlobal = "window.nativeBridge"
 private let bridgeHandlerName = "strata"
 
 public final class Bridge {
+    public typealias CompletionHandler = (_ result: Any?, _ error: Error?) -> Void
+    
     public weak var delegate: BridgeDelegate?
     public var webView: WKWebView?
     
@@ -75,24 +81,35 @@ public final class Bridge {
 
     // MARK: - JavaScript
 
-    private func evaluate(javaScript: String) {
+    public func evaluate(javaScript: String, completion: CompletionHandler? = nil) {
         print("[bridge] evaluating: \(javaScript)")
         webView?.evaluateJavaScript(javaScript) { result, error in
             if let error = error {
                 print("[bridge] *** error evaluating JavaScript: \(error)")
             }
+            
+            completion?(result, error)
         }
+    }
+    
+    public func evaluate(function: String, arguments: [Any] = [], completion: CompletionHandler? = nil) {
+        guard let javaScript = generateJavaScript(function: function, arguments: arguments) else {
+            completion?(nil, BridgeError.javaScriptGenerationError)
+            return
+        }
+        
+        evaluate(javaScript: javaScript, completion: completion)
     }
 
     private func generateJavaScript(bridgeFunction function: String, argument: Any) -> String? {
-        return generateJavaScript(bridgeFunction: function, arguments: [argument])
+        generateJavaScript(bridgeFunction: function, arguments: [argument])
     }
 
     private func generateJavaScript(bridgeFunction function: String, arguments: [Any] = []) -> String? {
-        return generateJavaScript(function: "\(bridgeGlobal).\(function)", arguments: arguments)
+        generateJavaScript(function: "\(bridgeGlobal).\(function)", arguments: arguments)
     }
 
-    private func generateJavaScript(function: String, arguments: [Any] = []) -> String? {
+    public func generateJavaScript(function: String, arguments: [Any] = []) -> String? {
         guard let encodedArguments = encode(arguments: arguments) else {
             print("[bridge] *** error encoding arguments: \(arguments)")
             return nil
@@ -113,7 +130,7 @@ public final class Bridge {
 
     private func sanitizeFunctionName(_ name: String) -> String {
         // Strip parens if included
-        return name.hasSuffix("()") ? String(name.dropLast(2)) : name
+        name.hasSuffix("()") ? String(name.dropLast(2)) : name
     }
 }
 
