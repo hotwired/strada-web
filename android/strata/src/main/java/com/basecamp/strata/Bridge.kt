@@ -16,7 +16,10 @@ private const val bridgeJavascriptInterface = "Strata"
 @Suppress("unused")
 class Bridge(val webView: WebView) {
     internal var repository = Repository()
+
     var delegate: BridgeDelegate? = null
+    var componentsAreRegistered: Boolean = false
+        private set
 
     init {
         // The JavascriptInterface must be added before the page is loaded
@@ -47,12 +50,22 @@ class Bridge(val webView: WebView) {
         evaluate(userScript())
     }
 
+    fun reset() {
+        componentsAreRegistered = false
+    }
+
     @JavascriptInterface
     fun bridgeDidInitialize() {
         log("bridge initialized")
         runOnUiThread {
             delegate?.bridgeDidInitialize()
         }
+    }
+
+    @JavascriptInterface
+    fun bridgeDidUpdateSupportedComponents() {
+        log("bridge components registered")
+        componentsAreRegistered = true
     }
 
     @JavascriptInterface
@@ -68,8 +81,7 @@ class Bridge(val webView: WebView) {
     // Internal
 
     internal fun userScript(): String {
-        val context = requireNotNull(webView).context
-        return repository.getUserScript(context)
+        return repository.getUserScript(webView.context)
     }
 
     internal fun evaluate(javascript: String) {

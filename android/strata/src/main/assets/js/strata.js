@@ -40,6 +40,8 @@
     }
 
     notifyBridgeOfSupportedComponentsUpdate() {
+      this.supportedComponentsUpdated()
+
       if (window.webBridge) {
         window.webBridge.adapterDidUpdateSupportedComponents()
       }
@@ -69,6 +71,10 @@
 
     ready() {
       Strata.bridgeDidInitialize()
+    }
+
+    supportedComponentsUpdated() {
+      Strata.bridgeDidUpdateSupportedComponents()
     }
 
     postMessage(message) {
