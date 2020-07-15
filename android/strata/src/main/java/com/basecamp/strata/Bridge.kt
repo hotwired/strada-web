@@ -63,7 +63,7 @@ class Bridge(val webView: WebView) {
     }
 
     @JavascriptInterface
-    fun bridgeDidRegisterSupportedComponents() {
+    fun bridgeDidUpdateSupportedComponents() {
         log("bridge components registered")
         componentsAreRegistered = true
     }

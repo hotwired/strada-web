@@ -74,7 +74,7 @@
     }
 
     supportedComponentsUpdated() {
-      Strata.bridgeDidRegisterSupportedComponents()
+      Strata.bridgeDidUpdateSupportedComponents()
     }
 
     postMessage(message) {
