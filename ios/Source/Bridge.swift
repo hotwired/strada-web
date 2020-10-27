@@ -82,10 +82,11 @@ public final class Bridge {
     // MARK: - JavaScript
 
     public func evaluate(javaScript: String, completion: CompletionHandler? = nil) {
-        print("[bridge] evaluating: \(javaScript)")
+        debugLog("[Strata] evaluating: \(javaScript)")
+        
         webView?.evaluateJavaScript(javaScript) { result, error in
             if let error = error {
-                print("[bridge] *** error evaluating JavaScript: \(error)")
+                debugLog("[Strata] *** error evaluating JavaScript: \(error)")
             }
             
             completion?(result, error)
@@ -111,7 +112,7 @@ public final class Bridge {
 
     public func generateJavaScript(function: String, arguments: [Any] = []) -> String? {
         guard let encodedArguments = encode(arguments: arguments) else {
-            print("[bridge] *** error encoding arguments: \(arguments)")
+            debugLog("[Strata] *** error encoding arguments: \(arguments)")
             return nil
         }
 
@@ -141,7 +142,7 @@ extension Bridge: ScriptMessageHandlerDelegate {
         } else if let message = Message(scriptMessage: scriptMessage) {
             delegate?.bridgeDidReceiveMessage(message)
         } else {
-            print("[bridge] unhandled message received: \(scriptMessage.body)")
+            debugLog("[Strata] unhandled message received: \(scriptMessage.body)")
         }
     }
 }
@@ -161,4 +162,10 @@ private class ScriptMessageHandler: NSObject, WKScriptMessageHandler {
     func userContentController(_ userContentController: WKUserContentController, didReceive scriptMessage: WKScriptMessage) {
         delegate?.scriptMessageHandlerDidReceiveMessage(scriptMessage)
     }
+}
+
+func debugLog(_ message: String) {
+    #if DEBUG
+    print(message)
+    #endif
 }
