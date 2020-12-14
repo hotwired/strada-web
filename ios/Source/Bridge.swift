@@ -10,7 +10,6 @@ public enum BridgeError: Error {
     case missingWebView
 }
 
-
 /// `Bridge` is the object for configuring a web view and
 /// the channel for sending/receiving messages
 public final class Bridge {
@@ -22,7 +21,7 @@ public final class Bridge {
     /// This needs to match whatever the JavaScript file uses
     private let bridgeGlobal = "window.nativeBridge"
     
-    /// The window.webkit.messageHandlers name
+    /// The webkit.messageHandlers name
     private let scriptHandlerName = "strata"
     
     deinit {
@@ -62,6 +61,15 @@ public final class Bridge {
         callBridgeFunction("send", arguments: [message.toJSON()])
     }
     
+    /// Convenience method to reply to a previously received message. Data will be replaced,
+    /// while id, component, and event will remain the same
+    /// - Parameter message: Message to reply to
+    /// - Parameter data: Data to send with reply
+    public func reply(to message: Message, with data: MessageData) {
+        let replyMessage = message.replacing(data: data)
+        callBridgeFunction("send", arguments: [replyMessage.toJSON()])
+    }
+    
     private func callBridgeFunction(_ function: String, arguments: [Any]) {
         let js = JavaScript(functionName: function, arguments: arguments)
         evaluate(javaScript: js)
@@ -69,7 +77,6 @@ public final class Bridge {
 
     // MARK: - Configuration
 
-    
     /// Configure the bridge in the provided configuration
     /// - Parameter configuration: WKWebViewConfiguration used to setup a web view
     public func load(into configuration: WKWebViewConfiguration) {

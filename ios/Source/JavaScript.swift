@@ -4,11 +4,15 @@ enum JavaScriptError: Error, Equatable {
     case invalidArgumentType
 }
 
+/// Represents a single JavaScript function call
+/// Handling the conversion of the arguments into a suitable format
 struct JavaScript {
+    /// The object to call the function on, nil by default
     var object: String? = nil
     let functionName: String
     var arguments: [Any] = []
 
+    /// Final string that can be passed to `webView.evaluateJavaScript()` method
     func toString() throws -> String {
         let encodedArguments = try encode(arguments: arguments)
         let function = sanitizedFunctionName(functionName)

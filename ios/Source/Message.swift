@@ -26,11 +26,14 @@ public struct Message: Equatable {
         self.data = data
     }
     
-    /// Returns a new Message,
+    /// Returns a new Message, replacing the existing data with passed-in data and event
+    /// If event is omitted, the existing event is used
     public func replacing(event updatedEvent: String? = nil, data updatedData: MessageData) -> Message {
         Message(id: id, component: component, event: updatedEvent ?? event, data: updatedData)
     }
     
+    /// Returns a new `Message` merging the passed-in data with the existing data
+    /// The passed-in data will overwrite any data with the same keys in the receiver
     public func merging(data updatedData: MessageData) -> Message {
         var mergedData = data
         updatedData.forEach { mergedData[$0] = $1 }
@@ -40,7 +43,8 @@ public struct Message: Equatable {
     
     // MARK: JSON
     
-    func toJSON() -> [String: Any] {
+    /// Used internally for converting the message into a JSON-friendly format for sending over the bridge
+    func toJSON() -> [String: AnyHashable] {
         [
             "id": id,
             "component": component,
