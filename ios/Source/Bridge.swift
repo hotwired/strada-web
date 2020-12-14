@@ -1,11 +1,3 @@
-//
-//  Bridge.swift
-//  Strata
-//
-//  Created by Zach Waugh on 3/1/19.
-//  Copyright © 2019 Basecamp. All rights reserved.
-//
-
 import Foundation
 import WebKit
 
@@ -15,63 +7,81 @@ public protocol BridgeDelegate: class {
 }
 
 public enum BridgeError: Error {
-    case javaScriptGenerationError
+    case missingWebView
 }
 
-// This needs to match whatever is set in strata.js
-private let bridgeGlobal = "window.nativeBridge"
 
-// webkit.messageHandlers.strata
-private let bridgeHandlerName = "strata"
-
+/// `Bridge` is the object for configuring a web view and
+/// the channel for sending/receiving messages
 public final class Bridge {
     public typealias CompletionHandler = (_ result: Any?, _ error: Error?) -> Void
     
-    public weak var delegate: BridgeDelegate?
     public var webView: WKWebView?
+    public weak var delegate: BridgeDelegate?
+
+    /// This needs to match whatever the JavaScript file uses
+    private let bridgeGlobal = "window.nativeBridge"
+    
+    /// The window.webkit.messageHandlers name
+    private let scriptHandlerName = "strata"
     
     deinit {
-        webView?.configuration.userContentController.removeScriptMessageHandler(forName: bridgeHandlerName)
+        webView?.configuration.userContentController.removeScriptMessageHandler(forName: scriptHandlerName)
     }
     
-    public init(webView: WKWebView? = nil) {
+    /// Create a new Bridge object for calling methods on this web view with a delegate
+    /// for receiving messages
+    public init(webView: WKWebView? = nil, delegate: BridgeDelegate? = nil) {
         self.webView = webView
+        self.delegate = delegate
     }
 
     // MARK: - API
-
+    
+    /// Register a single component
+    /// - Parameter component: Name of a component to register support for
     public func register(component: String) {
-        guard let javaScript = generateJavaScript(bridgeFunction: "register", argument: component) else { return }
-        evaluate(javaScript: javaScript)
+        callBridgeFunction("register", arguments: [component])
     }
-
+    
+    /// Register multiple components
+    /// - Parameter components: Array of component names to register
     public func register(components: [String]) {
-        guard let javaScript = generateJavaScript(bridgeFunction: "register", argument: components) else { return }
-        evaluate(javaScript: javaScript)
+        callBridgeFunction("register", arguments: components)
     }
-
+    
+    /// Unregister support for a single component
+    /// - Parameter component: Component name
     public func unregister(component: String) {
-        guard let javaScript = generateJavaScript(bridgeFunction: "unregister", argument: component) else { return }
-        evaluate(javaScript: javaScript)
+        callBridgeFunction("unregister", arguments: [component])
     }
-
+    
+    /// Send a message through the bridge to the web application
+    /// - Parameter message: Message to send
     public func send(_ message: Message) {
-        guard let javaScript = generateJavaScript(bridgeFunction: "send", argument: message.toJSON()) else { return }
-        evaluate(javaScript: javaScript)
+        callBridgeFunction("send", arguments: [message.toJSON()])
+    }
+    
+    private func callBridgeFunction(_ function: String, arguments: [Any]) {
+        let js = JavaScript(functionName: function, arguments: arguments)
+        evaluate(javaScript: js)
     }
 
     // MARK: - Configuration
 
+    
+    /// Configure the bridge in the provided configuration
+    /// - Parameter configuration: WKWebViewConfiguration used to setup a web view
     public func load(into configuration: WKWebViewConfiguration) {
         guard let userScript = userScript() else { return }
 
         // Install user script and message handlers in web view
         configuration.userContentController.addUserScript(userScript)
-        configuration.userContentController.add(ScriptMessageHandler(delegate: self), name: bridgeHandlerName)
+        configuration.userContentController.add(ScriptMessageHandler(delegate: self), name: scriptHandlerName)
     }
 
     private func userScript() -> WKUserScript? {
-        guard let url = Bundle(for: Bridge.self).url(forResource: "strata", withExtension: "js"),
+        guard let url = Bundle(for: Self.self).url(forResource: "strata", withExtension: "js"),
             let source = try? String(contentsOf: url, encoding: .utf8) else {
                 return nil
         }
@@ -79,14 +89,17 @@ public final class Bridge {
         return WKUserScript(source: source, injectionTime: .atDocumentStart, forMainFrameOnly: true)
     }
 
-    // MARK: - JavaScript
+    // MARK: - JavaScript Evaluation
 
     public func evaluate(javaScript: String, completion: CompletionHandler? = nil) {
-        debugLog("[Strata] evaluating: \(javaScript)")
+        guard let webView = webView else {
+            completion?(nil, BridgeError.missingWebView)
+            return
+        }
         
-        webView?.evaluateJavaScript(javaScript) { result, error in
+        webView.evaluateJavaScript(javaScript) { result, error in
             if let error = error {
-                debugLog("[Strata] *** error evaluating JavaScript: \(error)")
+                debugLog("[Strata] *** Error evaluating JavaScript: \(error)")
             }
             
             completion?(result, error)
@@ -94,44 +107,16 @@ public final class Bridge {
     }
     
     public func evaluate(function: String, arguments: [Any] = [], completion: CompletionHandler? = nil) {
-        guard let javaScript = generateJavaScript(function: function, arguments: arguments) else {
-            completion?(nil, BridgeError.javaScriptGenerationError)
-            return
+        evaluate(javaScript: JavaScript(functionName: function, arguments: arguments))
+    }
+    
+    private func evaluate(javaScript: JavaScript, completion: CompletionHandler? = nil) {
+        do {
+            evaluate(javaScript: try javaScript.toString(), completion: completion)
+        } catch {
+            debugLog("Error evaluating JavaScript: \(javaScript), error: \(error)")
+            completion?(nil, error)
         }
-        
-        evaluate(javaScript: javaScript, completion: completion)
-    }
-
-    private func generateJavaScript(bridgeFunction function: String, argument: Any) -> String? {
-        generateJavaScript(bridgeFunction: function, arguments: [argument])
-    }
-
-    private func generateJavaScript(bridgeFunction function: String, arguments: [Any] = []) -> String? {
-        generateJavaScript(function: "\(bridgeGlobal).\(function)", arguments: arguments)
-    }
-
-    public func generateJavaScript(function: String, arguments: [Any] = []) -> String? {
-        guard let encodedArguments = encode(arguments: arguments) else {
-            debugLog("[Strata] *** error encoding arguments: \(arguments)")
-            return nil
-        }
-
-        let functionName = sanitizeFunctionName(function)
-        return "\(functionName)(\(encodedArguments))"
-    }
-
-    private func encode(arguments: [Any]) -> String? {
-        guard let data = try? JSONSerialization.data(withJSONObject: arguments, options: []),
-            let string = String(data: data, encoding: .utf8) else {
-                return nil
-        }
-
-        return String(string.dropFirst().dropLast())
-    }
-
-    private func sanitizeFunctionName(_ name: String) -> String {
-        // Strip parens if included
-        name.hasSuffix("()") ? String(name.dropLast(2)) : name
     }
 }
 
@@ -142,30 +127,7 @@ extension Bridge: ScriptMessageHandlerDelegate {
         } else if let message = Message(scriptMessage: scriptMessage) {
             delegate?.bridgeDidReceiveMessage(message)
         } else {
-            debugLog("[Strata] unhandled message received: \(scriptMessage.body)")
+            debugLog("Unhandled message received: \(scriptMessage.body)")
         }
     }
-}
-
-// Avoids retain cycle caused by WKUserContentController
-protocol ScriptMessageHandlerDelegate: class {
-    func scriptMessageHandlerDidReceiveMessage(_ scriptMessage: WKScriptMessage)
-}
-
-private class ScriptMessageHandler: NSObject, WKScriptMessageHandler {
-    weak var delegate: ScriptMessageHandlerDelegate?
-    
-    init(delegate: ScriptMessageHandlerDelegate?) {
-        self.delegate = delegate
-    }
-    
-    func userContentController(_ userContentController: WKUserContentController, didReceive scriptMessage: WKScriptMessage) {
-        delegate?.scriptMessageHandlerDidReceiveMessage(scriptMessage)
-    }
-}
-
-func debugLog(_ message: String) {
-    #if DEBUG
-    print(message)
-    #endif
 }

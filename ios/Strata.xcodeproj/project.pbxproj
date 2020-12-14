@@ -8,11 +8,15 @@
 
 /* Begin PBXBuildFile section */
 		9274F1EF2229963B003E85F4 /* Strata.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9274F1E52229963B003E85F4 /* Strata.framework */; };
-		9274F1F42229963B003E85F4 /* StrataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9274F1F32229963B003E85F4 /* StrataTests.swift */; };
 		9274F1F62229963B003E85F4 /* Strata.h in Headers */ = {isa = PBXBuildFile; fileRef = 9274F1E82229963B003E85F4 /* Strata.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9274F2002229970D003E85F4 /* strata.js in Resources */ = {isa = PBXBuildFile; fileRef = 9274F1FF2229970D003E85F4 /* strata.js */; };
 		9274F20222299715003E85F4 /* Bridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9274F20122299715003E85F4 /* Bridge.swift */; };
 		9274F20422299738003E85F4 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9274F20322299738003E85F4 /* Message.swift */; };
+		C11349A62587EFFB000A6E56 /* ScriptMessageHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C11349A52587EFFB000A6E56 /* ScriptMessageHandler.swift */; };
+		C11349AA2587F013000A6E56 /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = C11349A92587F013000A6E56 /* Logging.swift */; };
+		C11349B22587F31E000A6E56 /* JavaScript.swift in Sources */ = {isa = PBXBuildFile; fileRef = C11349B12587F31E000A6E56 /* JavaScript.swift */; };
+		C11349C2258801F6000A6E56 /* JavaScriptTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C11349C1258801F6000A6E56 /* JavaScriptTests.swift */; };
+		C1EB05262588133D00933244 /* MessageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1EB05252588133D00933244 /* MessageTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -29,12 +33,16 @@
 		9274F1E52229963B003E85F4 /* Strata.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Strata.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9274F1E82229963B003E85F4 /* Strata.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Strata.h; sourceTree = "<group>"; };
 		9274F1E92229963B003E85F4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		9274F1EE2229963B003E85F4 /* StrataTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StrataTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		9274F1F32229963B003E85F4 /* StrataTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrataTests.swift; sourceTree = "<group>"; };
+		9274F1EE2229963B003E85F4 /* Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9274F1F52229963B003E85F4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9274F1FF2229970D003E85F4 /* strata.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = strata.js; sourceTree = "<group>"; };
 		9274F20122299715003E85F4 /* Bridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bridge.swift; sourceTree = "<group>"; };
 		9274F20322299738003E85F4 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
+		C11349A52587EFFB000A6E56 /* ScriptMessageHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScriptMessageHandler.swift; sourceTree = "<group>"; };
+		C11349A92587F013000A6E56 /* Logging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logging.swift; sourceTree = "<group>"; };
+		C11349B12587F31E000A6E56 /* JavaScript.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JavaScript.swift; sourceTree = "<group>"; };
+		C11349C1258801F6000A6E56 /* JavaScriptTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JavaScriptTests.swift; sourceTree = "<group>"; };
+		C1EB05252588133D00933244 /* MessageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -69,7 +77,7 @@
 			isa = PBXGroup;
 			children = (
 				9274F1E52229963B003E85F4 /* Strata.framework */,
-				9274F1EE2229963B003E85F4 /* StrataTests.xctest */,
+				9274F1EE2229963B003E85F4 /* Tests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -79,6 +87,9 @@
 			children = (
 				9274F20122299715003E85F4 /* Bridge.swift */,
 				9274F20322299738003E85F4 /* Message.swift */,
+				C11349A52587EFFB000A6E56 /* ScriptMessageHandler.swift */,
+				C11349B12587F31E000A6E56 /* JavaScript.swift */,
+				C11349A92587F013000A6E56 /* Logging.swift */,
 				9274F1FF2229970D003E85F4 /* strata.js */,
 				9274F1E82229963B003E85F4 /* Strata.h */,
 				9274F1E92229963B003E85F4 /* Info.plist */,
@@ -89,7 +100,8 @@
 		9274F1F22229963B003E85F4 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				9274F1F32229963B003E85F4 /* StrataTests.swift */,
+				C11349C1258801F6000A6E56 /* JavaScriptTests.swift */,
+				C1EB05252588133D00933244 /* MessageTests.swift */,
 				9274F1F52229963B003E85F4 /* Info.plist */,
 			);
 			path = Tests;
@@ -127,9 +139,9 @@
 			productReference = 9274F1E52229963B003E85F4 /* Strata.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		9274F1ED2229963B003E85F4 /* StrataTests */ = {
+		9274F1ED2229963B003E85F4 /* Tests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 9274F1FC2229963B003E85F4 /* Build configuration list for PBXNativeTarget "StrataTests" */;
+			buildConfigurationList = 9274F1FC2229963B003E85F4 /* Build configuration list for PBXNativeTarget "Tests" */;
 			buildPhases = (
 				9274F1EA2229963B003E85F4 /* Sources */,
 				9274F1EB2229963B003E85F4 /* Frameworks */,
@@ -140,9 +152,9 @@
 			dependencies = (
 				9274F1F12229963B003E85F4 /* PBXTargetDependency */,
 			);
-			name = StrataTests;
+			name = Tests;
 			productName = StrataTests;
-			productReference = 9274F1EE2229963B003E85F4 /* StrataTests.xctest */;
+			productReference = 9274F1EE2229963B003E85F4 /* Tests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -179,7 +191,7 @@
 			projectRoot = "";
 			targets = (
 				9274F1E42229963B003E85F4 /* Strata */,
-				9274F1ED2229963B003E85F4 /* StrataTests */,
+				9274F1ED2229963B003E85F4 /* Tests */,
 			);
 		};
 /* End PBXProject section */
@@ -207,8 +219,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C11349A62587EFFB000A6E56 /* ScriptMessageHandler.swift in Sources */,
+				C11349B22587F31E000A6E56 /* JavaScript.swift in Sources */,
 				9274F20222299715003E85F4 /* Bridge.swift in Sources */,
 				9274F20422299738003E85F4 /* Message.swift in Sources */,
+				C11349AA2587F013000A6E56 /* Logging.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -216,7 +231,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9274F1F42229963B003E85F4 /* StrataTests.swift in Sources */,
+				C11349C2258801F6000A6E56 /* JavaScriptTests.swift in Sources */,
+				C1EB05262588133D00933244 /* MessageTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -467,7 +483,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		9274F1FC2229963B003E85F4 /* Build configuration list for PBXNativeTarget "StrataTests" */ = {
+		9274F1FC2229963B003E85F4 /* Build configuration list for PBXNativeTarget "Tests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				9274F1FD2229963B003E85F4 /* Debug */,

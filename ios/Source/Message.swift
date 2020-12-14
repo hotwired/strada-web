@@ -1,17 +1,11 @@
-//
-//  Message.swift
-//  Strata
-//
-//  Created by Zach Waugh on 3/1/19.
-//  Copyright © 2019 Basecamp. All rights reserved.
-//
-
 import Foundation
 import WebKit
 
-public typealias MessageData = [String: Any]
+public typealias MessageData = [String: AnyHashable]
 
-public struct Message {
+/// A `Message` is the structure sent back and forth over the bridge
+/// to enable communication between native and web apps
+public struct Message: Equatable {
     /// A unique identifier for this message. You can reply to messages by sending
     /// the same message back, or creating a new message with the same id
     public let id: String
@@ -32,11 +26,12 @@ public struct Message {
         self.data = data
     }
     
-    public func replacing(data updatedData: [String: Any]) -> Message {
-        return Message(id: id, component: component, event: event, data: updatedData)
+    /// Returns a new Message,
+    public func replacing(event updatedEvent: String? = nil, data updatedData: MessageData) -> Message {
+        Message(id: id, component: component, event: updatedEvent ?? event, data: updatedData)
     }
     
-    public func merging(data updatedData: [String: Any]) -> Message {
+    public func merging(data updatedData: MessageData) -> Message {
         var mergedData = data
         updatedData.forEach { mergedData[$0] = $1 }
         
@@ -46,7 +41,12 @@ public struct Message {
     // MARK: JSON
     
     func toJSON() -> [String: Any] {
-        return ["id": id, "component": component, "event": event, "data": data]
+        [
+            "id": id,
+            "component": component,
+            "event": event,
+            "data": data
+        ]
     }
 }
 

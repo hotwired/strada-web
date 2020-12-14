@@ -42,8 +42,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "9274F1ED2229963B003E85F4"
-               BuildableName = "StrataTests.xctest"
-               BlueprintName = "StrataTests"
+               BuildableName = "Tests.xctest"
+               BlueprintName = "Tests"
                ReferencedContainer = "container:Strata.xcodeproj">
             </BuildableReference>
          </TestableReference>
