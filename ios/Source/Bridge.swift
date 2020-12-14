@@ -15,7 +15,13 @@ public enum BridgeError: Error {
 public final class Bridge {
     public typealias CompletionHandler = (_ result: Any?, _ error: Error?) -> Void
     
-    public var webView: WKWebView?
+    public var webView: WKWebView? {
+        didSet {
+            guard webView != oldValue else { return }
+            loadIntoWebView()
+        }
+    }
+    
     public weak var delegate: BridgeDelegate?
 
     /// This needs to match whatever the JavaScript file uses
@@ -33,6 +39,7 @@ public final class Bridge {
     public init(webView: WKWebView? = nil, delegate: BridgeDelegate? = nil) {
         self.webView = webView
         self.delegate = delegate
+        loadIntoWebView()
     }
 
     // MARK: - API
@@ -46,7 +53,7 @@ public final class Bridge {
     /// Register multiple components
     /// - Parameter components: Array of component names to register
     public func register(components: [String]) {
-        callBridgeFunction("register", arguments: components)
+        callBridgeFunction("register", arguments: [components])
     }
     
     /// Unregister support for a single component
@@ -71,23 +78,25 @@ public final class Bridge {
     }
     
     private func callBridgeFunction(_ function: String, arguments: [Any]) {
-        let js = JavaScript(functionName: function, arguments: arguments)
+        let js = JavaScript(object: bridgeGlobal, functionName: function, arguments: arguments)
         evaluate(javaScript: js)
     }
 
     // MARK: - Configuration
-
-    /// Configure the bridge in the provided configuration
-    /// - Parameter configuration: WKWebViewConfiguration used to setup a web view
-    public func load(into configuration: WKWebViewConfiguration) {
-        guard let userScript = userScript() else { return }
+    
+    /// Configure the bridge in the provided web view
+    private func loadIntoWebView() {
+        guard let configuration = webView?.configuration else { return }
 
         // Install user script and message handlers in web view
-        configuration.userContentController.addUserScript(userScript)
+        if let userScript = makeUserScript() {
+            configuration.userContentController.addUserScript(userScript)
+        }
+        
         configuration.userContentController.add(ScriptMessageHandler(delegate: self), name: scriptHandlerName)
     }
 
-    private func userScript() -> WKUserScript? {
+    private func makeUserScript() -> WKUserScript? {
         guard let url = Bundle(for: Self.self).url(forResource: "strata", withExtension: "js"),
             let source = try? String(contentsOf: url, encoding: .utf8) else {
                 return nil

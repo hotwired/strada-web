@@ -17,6 +17,7 @@
 		C11349B22587F31E000A6E56 /* JavaScript.swift in Sources */ = {isa = PBXBuildFile; fileRef = C11349B12587F31E000A6E56 /* JavaScript.swift */; };
 		C11349C2258801F6000A6E56 /* JavaScriptTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C11349C1258801F6000A6E56 /* JavaScriptTests.swift */; };
 		C1EB05262588133D00933244 /* MessageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1EB05252588133D00933244 /* MessageTests.swift */; };
+		C1EB052E2588201600933244 /* BridgeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1EB052D2588201600933244 /* BridgeTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -43,6 +44,7 @@
 		C11349B12587F31E000A6E56 /* JavaScript.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JavaScript.swift; sourceTree = "<group>"; };
 		C11349C1258801F6000A6E56 /* JavaScriptTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JavaScriptTests.swift; sourceTree = "<group>"; };
 		C1EB05252588133D00933244 /* MessageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageTests.swift; sourceTree = "<group>"; };
+		C1EB052D2588201600933244 /* BridgeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BridgeTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -100,6 +102,7 @@
 		9274F1F22229963B003E85F4 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				C1EB052D2588201600933244 /* BridgeTests.swift */,
 				C11349C1258801F6000A6E56 /* JavaScriptTests.swift */,
 				C1EB05252588133D00933244 /* MessageTests.swift */,
 				9274F1F52229963B003E85F4 /* Info.plist */,
@@ -232,6 +235,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C11349C2258801F6000A6E56 /* JavaScriptTests.swift in Sources */,
+				C1EB052E2588201600933244 /* BridgeTests.swift in Sources */,
 				C1EB05262588133D00933244 /* MessageTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

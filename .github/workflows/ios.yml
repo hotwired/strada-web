@@ -1,0 +1,13 @@
+name: iOS
+
+on: [push]
+
+jobs:
+  test:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: Run Tests
+      run: xcodebuild -project ios/Strata.xcodeproj -scheme Strata test -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 12'
+      env:
+        DEVELOPER_DIR: /Applications/Xcode_12.2.app
