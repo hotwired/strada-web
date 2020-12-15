@@ -10,7 +10,7 @@ type PendingMessage = {
   callback: MessageCallback
 }
 
-export default class {
+export class Bridge {
   private adapter: Adapter | null
   private lastMessageId: number
   private pendingMessages: Array<PendingMessage>

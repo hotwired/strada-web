@@ -1,11 +1,16 @@
-import Bridge from "./bridge"
+import { Bridge } from "./bridge"
+export { Component } from "./component"
 
 declare global {
   interface Window {
-    webBridge: Bridge
+    Strada: any
   }
 }
 
-const bridge = new Bridge()
-window.webBridge = bridge
-bridge.start()
+if (!window.Strada) {
+  window.Strada = {}
+}
+
+const webBridge = new Bridge()
+window.Strada.web = webBridge
+webBridge.start()
