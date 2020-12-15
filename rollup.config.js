@@ -1,11 +1,11 @@
 import typescript from "rollup-plugin-typescript2"
-import { version } from "../package.json"
+import { version } from "./package.json"
 const year = new Date().getFullYear()
 
 const options = {
   plugins: [
     typescript({
-      cacheRoot: "../node_modules/.cache",
+      cacheRoot: "node_modules/.cache",
       tsconfigDefaults: {
         compilerOptions: {
           removeComments: true
@@ -17,12 +17,12 @@ const options = {
 
 export default [
   {
-    input: "web/index.ts",
+    input: "src/index.ts",
     output: {
-      banner: `/*\nStrata ${version}\nCopyright © ${year} Basecamp, LLC\n */`,
-      file: "web/dist/strata.js",
+      banner: `/*\nStrada ${version}\nCopyright © ${year} Basecamp, LLC\n */`,
+      file: "dist/strada.js",
       format: "umd",
-      name: "Strata",
+      name: "Strada",
       sourcemap: true
     },
     ...options

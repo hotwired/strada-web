@@ -1,21 +1,22 @@
 {
-  "name": "strata",
-  "version": "0.1.0",
-  "main": "web/dist/strata.js",
+  "name": "@hotwired/strada",
+  "version": "1.0.0-beta.1",
+  "main": "dist/strada.js",
   "files": [
-    "web/dist"
+    "dist"
   ],
-  "repository": "git@github.com:basecamp/strata.git",
-  "author": "Zach Waugh <zwaugh@gmail.com>",
+  "repository": "git@github.com:hotwired/strada-web.git",
+  "author": "zachwaugh, jayohms",
   "license": "MIT",
   "private": true,
   "scripts": {
-    "clean": "rm -fr web/build",
-    "build": "tsc -b web/tsconfig.json && rollup -c web/rollup.config.js"
+    "clean": "rm -rf dist",
+    "build": "tsc -b && rollup -c"
   },
   "devDependencies": {
-    "rollup": "^1.4.0",
-    "rollup-plugin-typescript2": "^0.19.3",
-    "typescript": "^3.5.3"
+    "rollup": "^2.9.1",
+    "rollup-plugin-typescript2": "^0.29.0",
+    "tslib": "^2.0.3",
+    "typescript": "^3.8.3"
   }
 }
