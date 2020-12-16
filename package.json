@@ -11,7 +11,6 @@
   },
   "author": "zachwaugh, jayohms",
   "license": "MIT",
-  "private": true,
   "scripts": {
     "clean": "rm -rf dist",
     "build": "tsc -b && rollup -c"
