@@ -18,7 +18,7 @@ export class BridgeElement {
       this.bridgeAttribute("title") ||
       this.attribute("aria-label") ||
       this.element.textContent ||
-      this.element.value
+      (<HTMLInputElement>this.element).value
     ).trim()
   }
 
