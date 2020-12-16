@@ -1,11 +1,14 @@
 {
   "name": "@hotwired/strada",
-  "version": "1.0.0-beta.1",
+  "version": "0.9.0",
   "main": "dist/strada.js",
   "files": [
     "dist"
   ],
-  "repository": "git@github.com:hotwired/strada-web.git",
+  "repository": "git://github.com/hotwired/strada-web.git",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "author": "zachwaugh, jayohms",
   "license": "MIT",
   "private": true,
