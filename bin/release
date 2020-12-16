@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# Creates a new release on the repo
+# Will do a clean build, tag the repo, create a release, and push
+# Usage: bin/release 1.0.1
+
+npm run clean
+npm run build
+
+version=$1
+archive="dist/strada-$1.zip"
+zip $archive dist/strada.js package.json
+
+git tag $version
+git push --tags origin
+gh release create $version $archive
+

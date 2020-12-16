@@ -6,13 +6,10 @@
     "dist"
   ],
   "repository": "git://github.com/hotwired/strada-web.git",
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
-  },
   "author": "zachwaugh, jayohms",
   "license": "MIT",
   "scripts": {
-    "clean": "rm -rf dist",
+    "clean": "rm -rf dist/*",
     "build": "tsc -b && rollup -c"
   },
   "devDependencies": {
