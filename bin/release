@@ -8,10 +8,10 @@ npm run clean
 npm run build
 
 version=$1
-archive="dist/strada-$1.zip"
+archive="dist/strada-$version.zip"
 zip $archive dist/strada.js package.json
 
 git tag $version
 git push --tags origin
-gh release create $version $archive
+gh release create $version \"$archive#strada-$version.zip\" -t $version
 
