@@ -11,7 +11,7 @@ type PendingMessage = {
 }
 
 export default class {
-  private adapter: Adapter
+  private adapter: Adapter | null
   private lastMessageId: number
   private pendingMessages: Array<PendingMessage>
   private pendingCallbacks: Map<MessageId, MessageCallback>
@@ -42,8 +42,9 @@ export default class {
   send({ component, event, data, callback }: PendingMessage): MessageId | null {
     if (!this.adapter) {
       this.savePendingMessage({ component, event, data, callback })
-      return
+      return null
     }
+
     if (!this.supportsComponent(component)) return null
 
     const id = this.generateMessageId()
@@ -62,8 +63,8 @@ export default class {
   }
 
   executeCallbackFor(message: Message) {
-    if (this.pendingCallbacks.has(message.id)) {
-      const callback = this.pendingCallbacks.get(message.id)
+    const callback = this.pendingCallbacks.get(message.id)
+    if (callback) {
       callback(message)
     }
   }
@@ -93,7 +94,9 @@ export default class {
   }
 
   adapterDidUpdateSupportedComponents() {
-    document.documentElement.dataset.bridgeComponents = this.adapter.supportedComponents.join(" ")
+    if (this.adapter) {
+      document.documentElement.dataset.bridgeComponents = this.adapter.supportedComponents.join(" ")
+    }
   }
 
   private savePendingMessage(message: PendingMessage) {

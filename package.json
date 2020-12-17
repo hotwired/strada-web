@@ -9,12 +9,12 @@
   "author": "zachwaugh, jayohms",
   "license": "MIT",
   "scripts": {
-    "clean": "rm -rf dist/*",
-    "build": "tsc -b && rollup -c"
+    "clean": "rm -rf build/* dist/*",
+    "prebuild": "npm run clean",
+    "build": "tsc && bin/build.js"
   },
   "devDependencies": {
-    "rollup": "^2.9.1",
-    "rollup-plugin-typescript2": "^0.29.0",
+    "esbuild": "^0.8.23",
     "tslib": "^2.0.3",
     "typescript": "^3.8.3"
   }
