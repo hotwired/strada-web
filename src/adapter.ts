@@ -1,4 +1,4 @@
-import { Message } from "./message"
+import { Message } from "./helpers/types"
 
 export interface Adapter {
   platform: string

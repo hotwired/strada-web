@@ -1,18 +1,18 @@
 import { Controller } from "stimulus"
 import { Bridge } from "./bridge"
 import { BridgeElement } from "./bridge_element"
+import { MessageCallback } from "./helpers/types"
 
 export class Component extends Controller {
   static component = ""
 
-  pendingMessageCallbacks: Array<any>
+  pendingMessageCallbacks: Array<any> = []
 
   initialize() {
     this.pendingMessageCallbacks = []
   }
 
-  connect() {
-  }
+  connect() {}
 
   disconnect() {
     this.removePendingCallbacks()
@@ -20,14 +20,25 @@ export class Component extends Controller {
   }
 
   get component() {
-    return (<typeof Component>this.constructor).component
+    return (this.constructor as typeof Component).component
+  }
+
+  get platformOptingOut() {
+    const { bridgePlatform } = document.documentElement.dataset
+    return (
+      this.identifier ==
+      this.element.getAttribute(`data-controller-optout-${bridgePlatform}`)
+    )
   }
 
   get enabled() {
-    return window.Strada.supportsComponent(this.component)
+    return (
+      !this.platformOptingOut &&
+      this.bridge.supportsComponent(this.component)
+    )
   }
 
-  send(event, data: any = {}, callback) {
+  send(event: any, data: any = {}, callback: MessageCallback | null) {
     // Include the url with each message, so the native app can
     // ensure messages are delivered to the correct destination
     data.metadata = {

@@ -1,3 +1,5 @@
+import { Component } from "./component"
+
 export class BridgeElement {
   element: Element
 
@@ -5,11 +7,11 @@ export class BridgeElement {
     this.element = element
   }
 
-  static makeMenuItems(elements) {
+  static makeMenuItems(elements: Element[]) {
     return elements.map((element, index) => new BridgeElement(element).menuItem(index)).filter(item => item)
   }
 
-  static makeMenuGroups(elements) {
+  static makeMenuGroups(elements: Element[]) {
     return elements.map(element => new BridgeElement(element).menuGroup())
   }
 
@@ -45,6 +47,10 @@ export class BridgeElement {
     return this.bridgeAttribute("selected") === "true"
   }
 
+  get filterable() {
+    return this.bridgeAttribute("filterable") === "true"
+  }
+
   get enabled() {
     return !this.disabled
   }
@@ -54,7 +60,7 @@ export class BridgeElement {
     return disabled === "true" || disabled === this.platform
   }
 
-  enableForComponent(component) {
+  enableForComponent(component: Component) {
     if (component.enabled) {
       this.removeBridgeAttribute("disabled")
     }
@@ -79,7 +85,7 @@ export class BridgeElement {
     }
   }
 
-  menuItem(index) {
+  menuItem(index: number) {
     if (this.disabled) return null
 
     return {
@@ -99,24 +105,35 @@ export class BridgeElement {
     }
   }
 
-  hasClass(className) {
+  hasClass(className: string) {
     return this.element.classList.contains(className)
   }
 
-  attribute(name) {
+  attribute(name: string) {
     return this.element.getAttribute(name)
   }
 
-  bridgeAttribute(name) {
+  bridgeAttribute(name: string) {
     return this.attribute(`data-bridge-${name}`)
   }
 
-  setBridgeAttribute(name, value) {
+  setBridgeAttribute(name: string, value: any) {
     this.element.setAttribute(`data-bridge-${name}`, value)
   }
 
-  removeBridgeAttribute(name) {
+  removeBridgeAttribute(name: string) {
     this.element.removeAttribute(`data-bridge-${name}`)
+  }
+
+  click() {
+    // Remove the target attribute before clicking to avoid an
+    // issue in Android WebView that prevents a target="_blank"
+    // url from being obtained from a javascript click.
+    if (this.platform == "android") {
+      this.element.removeAttribute("target")
+    }
+
+    (<HTMLElement>this.element).click()
   }
 
   get platform() {
