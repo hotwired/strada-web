@@ -14,11 +14,11 @@
     "build": "tsc && bin/build.js"
   },
   "devDependencies": {
-    "esbuild": "^0.8.23",
+    "esbuild": "^0.17.16",
     "tslib": "^2.0.3",
-    "typescript": "^3.8.3"
+    "typescript": "^5.0.4"
   },
   "dependencies": {
-    "stimulus": "^2.0.0"
+    "stimulus": "^3.2.1"
   }
 }
