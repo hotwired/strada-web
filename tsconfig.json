@@ -11,7 +11,7 @@
     "outDir": "build",
     "sourceMap": true,
     "strict": true,
-    "target": "es5",
+    "target": "es2017",
   },
   "exclude": ["build", "dist"]
 }
