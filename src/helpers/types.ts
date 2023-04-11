@@ -4,3 +4,5 @@ export interface Message {
   event: string
   data: object
 }
+
+export type MessageCallback = (message: Message) => void

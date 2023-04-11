@@ -1,13 +1,12 @@
 import { Adapter } from "./adapter"
-import { Message } from "./message"
+import { Message, MessageCallback } from "./helpers/types"
 
-type MessageCallback = (message: Message) => void
 type MessageId = string
 type PendingMessage = {
   component: string,
   event: string,
   data: object,
-  callback: MessageCallback
+  callback: MessageCallback | null
 }
 
 export class Bridge {
