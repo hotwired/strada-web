@@ -1,12 +1,12 @@
 {
   "name": "@hotwired/strada",
-  "version": "0.9.2",
+  "version": "0.9.3",
   "main": "dist/strada.js",
   "files": [
     "dist"
   ],
   "repository": "git://github.com/hotwired/strada-web.git",
-  "author": "zachwaugh, jayohms",
+  "author": "37signals, LLC",
   "license": "MIT",
   "scripts": {
     "clean": "rm -rf build/* dist/*",
