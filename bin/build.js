@@ -10,6 +10,7 @@ const options = {
   bundle: true,
   minify: true,
   banner: banner,
+  format: 'esm',
   outfile: "dist/strada.js",
 }
 
