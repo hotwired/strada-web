@@ -8,7 +8,7 @@ const banner = `/*\nStrada ${package.version}\nCopyright © ${year} 37signals, L
 const options = {
   entryPoints: ["src/index.ts"],
   bundle: true,
-  minify: true,
+  minify: false,
   banner: { js: banner },
   format: 'esm',
   outfile: "dist/strada.js",

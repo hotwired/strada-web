@@ -2,4 +2,693 @@
 Strada 0.9.3
 Copyright © 2023 37signals, LLC
 */
-var u=class{constructor(){this.adapter=null,this.lastMessageId=0,this.pendingMessages=[],this.pendingCallbacks=new Map}start(){this.notifyApplicationAfterStart()}notifyApplicationAfterStart(){document.dispatchEvent(new Event("web-bridge:ready"))}supportsComponent(t){return this.adapter?this.adapter.supportsComponent(t):!1}send({component:t,event:s,data:r,callback:n}){if(!this.adapter)return this.savePendingMessage({component:t,event:s,data:r,callback:n}),null;if(!this.supportsComponent(t))return null;let i=this.generateMessageId(),o={id:i,component:t,event:s,data:r||{}};return this.adapter.receive(o),n&&this.pendingCallbacks.set(i,n),i}receive(t){this.executeCallbackFor(t)}executeCallbackFor(t){let s=this.pendingCallbacks.get(t.id);s&&s(t)}removeCallbackFor(t){this.pendingCallbacks.has(t)&&this.pendingCallbacks.delete(t)}removePendingMessagesFor(t){this.pendingMessages=this.pendingMessages.filter(s=>s.component!=t)}generateMessageId(){return(++this.lastMessageId).toString()}setAdapter(t){this.adapter=t,document.documentElement.dataset.bridgePlatform=this.adapter.platform,this.adapterDidUpdateSupportedComponents(),this.sendPendingMessages()}adapterDidUpdateSupportedComponents(){this.adapter&&(document.documentElement.dataset.bridgeComponents=this.adapter.supportedComponents.join(" "))}savePendingMessage(t){this.pendingMessages.push(t)}sendPendingMessages(){this.pendingMessages.forEach(t=>this.send(t)),this.pendingMessages=[]}};function A(e){return e.replace(/(?:[_-])([a-z0-9])/g,(t,s)=>s.toUpperCase())}function M(e){return A(e.replace(/--/g,"-").replace(/__/g,"_"))}function d(e){return e.charAt(0).toUpperCase()+e.slice(1)}function w(e){return e.replace(/([A-Z])/g,(t,s)=>`-${s.toLowerCase()}`)}function m(e,t){let s=E(e);return Array.from(s.reduce((r,n)=>(C(n,t).forEach(i=>r.add(i)),r),new Set))}function k(e,t){return E(e).reduce((r,n)=>(r.push(...F(n,t)),r),[])}function E(e){let t=[];for(;e;)t.push(e),e=Object.getPrototypeOf(e);return t.reverse()}function C(e,t){let s=e[t];return Array.isArray(s)?s:[]}function F(e,t){let s=e[t];return s?Object.keys(s).map(r=>[r,s[r]]):[]}var _=(()=>typeof Object.getOwnPropertySymbols=="function"?e=>[...Object.getOwnPropertyNames(e),...Object.getOwnPropertySymbols(e)]:Object.getOwnPropertyNames)(),q=(()=>{function e(s){function r(){return Reflect.construct(s,arguments,new.target)}return r.prototype=Object.create(s.prototype,{constructor:{value:r}}),Reflect.setPrototypeOf(r,s),r}function t(){let r=e(function(){this.a.call(this)});return r.prototype.a=function(){},new r}try{return t(),e}catch{return r=>class extends r{}}})();var J={controllerAttribute:"data-controller",actionAttribute:"data-action",targetAttribute:"data-target",targetAttributeForScope:e=>`data-${e}-target`,outletAttributeForScope:(e,t)=>`data-${e}-${t}-outlet`,keyMappings:Object.assign(Object.assign({enter:"Enter",tab:"Tab",esc:"Escape",space:" ",up:"ArrowUp",down:"ArrowDown",left:"ArrowLeft",right:"ArrowRight",home:"Home",end:"End"},b("abcdefghijklmnopqrstuvwxyz".split("").map(e=>[e,e]))),b("0123456789".split("").map(e=>[e,e])))};function b(e){return e.reduce((t,[s,r])=>Object.assign(Object.assign({},t),{[s]:r}),{})}function B(e){return m(e,"classes").reduce((s,r)=>Object.assign(s,T(r)),{})}function T(e){return{[`${e}Class`]:{get(){let{classes:t}=this;if(t.has(e))return t.get(e);{let s=t.getAttributeName(e);throw new Error(`Missing attribute "${s}"`)}}},[`${e}Classes`]:{get(){return this.classes.getAll(e)}},[`has${d(e)}Class`]:{get(){return this.classes.has(e)}}}}function $(e){return m(e,"outlets").reduce((s,r)=>Object.assign(s,x(r)),{})}function x(e){let t=M(e);return{[`${t}Outlet`]:{get(){let s=this.outlets.find(e);if(s){let r=this.application.getControllerForElementAndIdentifier(s,e);if(r)return r;throw new Error(`Missing "data-controller=${e}" attribute on outlet element for "${this.identifier}" controller`)}throw new Error(`Missing outlet element "${e}" for "${this.identifier}" controller`)}},[`${t}Outlets`]:{get(){let s=this.outlets.findAll(e);return s.length>0?s.map(r=>{let n=this.application.getControllerForElementAndIdentifier(r,e);if(n)return n;console.warn(`The provided outlet element is missing the outlet controller "${e}" for "${this.identifier}"`,r)}).filter(r=>r):[]}},[`${t}OutletElement`]:{get(){let s=this.outlets.find(e);if(s)return s;throw new Error(`Missing outlet element "${e}" for "${this.identifier}" controller`)}},[`${t}OutletElements`]:{get(){return this.outlets.findAll(e)}},[`has${d(t)}Outlet`]:{get(){return this.outlets.has(e)}}}}function D(e){return m(e,"targets").reduce((s,r)=>Object.assign(s,N(r)),{})}function N(e){return{[`${e}Target`]:{get(){let t=this.targets.find(e);if(t)return t;throw new Error(`Missing target element "${e}" for "${this.identifier}" controller`)}},[`${e}Targets`]:{get(){return this.targets.findAll(e)}},[`has${d(e)}Target`]:{get(){return this.targets.has(e)}}}}function S(e){let t=k(e,"values"),s={valueDescriptorMap:{get(){return t.reduce((r,n)=>{let i=O(n,this.identifier),o=this.data.getAttributeNameForKey(i.key);return Object.assign(r,{[o]:i})},{})}}};return t.reduce((r,n)=>Object.assign(r,L(n)),s)}function L(e,t){let s=O(e,t),{key:r,name:n,reader:i,writer:o}=s;return{[n]:{get(){let c=this.data.get(r);return c!==null?i(c):s.defaultValue},set(c){c===void 0?this.data.delete(r):this.data.set(r,o(c))}},[`has${d(n)}`]:{get(){return this.data.has(r)||s.hasCustomDefaultValue}}}}function O([e,t],s){return j({controller:s,token:e,typeDefinition:t})}function f(e){switch(e){case Array:return"array";case Boolean:return"boolean";case Number:return"number";case Object:return"object";case String:return"string"}}function h(e){switch(typeof e){case"boolean":return"boolean";case"number":return"number";case"string":return"string"}if(Array.isArray(e))return"array";if(Object.prototype.toString.call(e)==="[object Object]")return"object"}function I(e){let t=f(e.typeObject.type);if(!t)return;let s=h(e.typeObject.default);if(t!==s){let r=e.controller?`${e.controller}.${e.token}`:e.token;throw new Error(`The specified default value for the Stimulus Value "${r}" must match the defined type "${t}". The provided default value of "${e.typeObject.default}" is of type "${s}".`)}return t}function V(e){let t=I({controller:e.controller,token:e.token,typeObject:e.typeDefinition}),s=h(e.typeDefinition),r=f(e.typeDefinition),n=t||s||r;if(n)return n;let i=e.controller?`${e.controller}.${e.typeDefinition}`:e.token;throw new Error(`Unknown value type "${i}" for "${e.token}" value`)}function K(e){let t=f(e);if(t)return P[t];let s=e.default;return s!==void 0?s:e}function j(e){let t=`${w(e.token)}-value`,s=V(e);return{type:s,key:t,name:A(t),get defaultValue(){return K(e.typeDefinition)},get hasCustomDefaultValue(){return h(e.typeDefinition)!==void 0},reader:U[s],writer:y[s]||y.default}}var P={get array(){return[]},boolean:!1,number:0,get object(){return{}},string:""},U={array(e){let t=JSON.parse(e);if(!Array.isArray(t))throw new TypeError(`expected value of type "array" but instead got value "${e}" of type "${h(t)}"`);return t},boolean(e){return!(e=="0"||String(e).toLowerCase()=="false")},number(e){return Number(e)},object(e){let t=JSON.parse(e);if(t===null||typeof t!="object"||Array.isArray(t))throw new TypeError(`expected value of type "object" but instead got value "${e}" of type "${h(t)}"`);return t},string(e){return e}},y={default:R,array:v,object:v};function v(e){return JSON.stringify(e)}function R(e){return`${e}`}var a=class{constructor(t){this.context=t}static get shouldLoad(){return!0}static afterLoad(t,s){}get application(){return this.context.application}get scope(){return this.context.scope}get element(){return this.scope.element}get identifier(){return this.scope.identifier}get targets(){return this.scope.targets}get outlets(){return this.scope.outlets}get classes(){return this.scope.classes}get data(){return this.scope.data}initialize(){}connect(){}disconnect(){}dispatch(t,{target:s=this.element,detail:r={},prefix:n=this.identifier,bubbles:i=!0,cancelable:o=!0}={}){let c=n?`${n}:${t}`:t,p=new CustomEvent(c,{detail:r,bubbles:i,cancelable:o});return s.dispatchEvent(p),p}};a.blessings=[B,D,S,$];a.targets=[];a.outlets=[];a.values={};var l=class{constructor(t){this.element=t}static makeMenuItems(t){return t.map((s,r)=>new l(s).menuItem(r)).filter(s=>s)}static makeMenuGroups(t){return t.map(s=>new l(s).menuGroup())}get title(){return(this.bridgeAttribute("title")||this.attribute("aria-label")||this.element.textContent||this.element.value).trim()}get icon(){let t=this.bridgeAttribute("icon-name"),s=this.bridgeAttribute(`icon-${this.platform}-url`);return t||s?{name:t,url:s}:null}get group(){return this.bridgeAttribute("group")||"default"}get style(){return this.bridgeAttribute("style")||"default"}get selected(){return this.bridgeAttribute("selected")==="true"}get filterable(){return this.bridgeAttribute("filterable")==="true"}get enabled(){return!this.disabled}get disabled(){let t=this.bridgeAttribute("disabled");return t==="true"||t===this.platform}enableForComponent(t){t.enabled&&this.removeBridgeAttribute("disabled")}get displayedOnPlatform(){return!this.hasClass(`u-hide@${this.platform}`)}showOnPlatform(){this.element.classList.remove(`u-hide@${this.platform}`)}hideOnPlatform(){this.element.classList.add(`u-hide@${this.platform}`)}get button(){return{title:this.title,icon:this.icon}}menuItem(t){return this.disabled?null:{title:this.title,style:this.style,groupName:this.group,selected:this.selected,icon:this.icon,index:t}}menuGroup(){return{title:this.title,name:this.group}}hasClass(t){return this.element.classList.contains(t)}attribute(t){return this.element.getAttribute(t)}bridgeAttribute(t){return this.attribute(`data-bridge-${t}`)}setBridgeAttribute(t,s){this.element.setAttribute(`data-bridge-${t}`,s)}removeBridgeAttribute(t){this.element.removeAttribute(`data-bridge-${t}`)}click(){this.platform=="android"&&this.element.removeAttribute("target"),this.element.click()}get platform(){return document.documentElement.dataset.bridgePlatform}};var g=class extends a{constructor(){super(...arguments);this.pendingMessageCallbacks=[]}initialize(){this.pendingMessageCallbacks=[]}connect(){}disconnect(){this.removePendingCallbacks(),this.removePendingMessages()}get component(){return this.constructor.component}get platformOptingOut(){let{bridgePlatform:s}=document.documentElement.dataset;return this.identifier==this.element.getAttribute(`data-controller-optout-${s}`)}get enabled(){return!this.platformOptingOut&&this.bridge.supportsComponent(this.component)}send(s,r={},n){r.metadata={url:window.location.href};let i={component:this.component,event:s,data:r,callback:n},o=this.bridge.send(i);n&&this.pendingMessageCallbacks.push(o)}removePendingCallbacks(){this.pendingMessageCallbacks.forEach(s=>this.bridge.removeCallbackFor(s))}removePendingMessages(){this.bridge.removePendingMessagesFor(this.component)}get bridgeElement(){return new l(this.element)}get bridge(){return window.Strada.web}};g.component="";if(!window.Strada){let e=new u;window.Strada={web:e},e.start()}export{g as Component};
+
+// src/bridge.ts
+var Bridge = class {
+  constructor() {
+    this.adapter = null;
+    this.lastMessageId = 0;
+    this.pendingMessages = [];
+    this.pendingCallbacks = /* @__PURE__ */ new Map();
+  }
+  start() {
+    this.notifyApplicationAfterStart();
+  }
+  notifyApplicationAfterStart() {
+    document.dispatchEvent(new Event("web-bridge:ready"));
+  }
+  supportsComponent(component) {
+    if (this.adapter) {
+      return this.adapter.supportsComponent(component);
+    } else {
+      return false;
+    }
+  }
+  send({ component, event, data, callback }) {
+    if (!this.adapter) {
+      this.savePendingMessage({ component, event, data, callback });
+      return null;
+    }
+    if (!this.supportsComponent(component))
+      return null;
+    const id = this.generateMessageId();
+    const message = { id, component, event, data: data || {} };
+    this.adapter.receive(message);
+    if (callback) {
+      this.pendingCallbacks.set(id, callback);
+    }
+    return id;
+  }
+  receive(message) {
+    this.executeCallbackFor(message);
+  }
+  executeCallbackFor(message) {
+    const callback = this.pendingCallbacks.get(message.id);
+    if (callback) {
+      callback(message);
+    }
+  }
+  removeCallbackFor(messageId) {
+    if (this.pendingCallbacks.has(messageId)) {
+      this.pendingCallbacks.delete(messageId);
+    }
+  }
+  removePendingMessagesFor(component) {
+    this.pendingMessages = this.pendingMessages.filter((message) => message.component != component);
+  }
+  generateMessageId() {
+    const id = ++this.lastMessageId;
+    return id.toString();
+  }
+  setAdapter(adapter) {
+    this.adapter = adapter;
+    document.documentElement.dataset.bridgePlatform = this.adapter.platform;
+    this.adapterDidUpdateSupportedComponents();
+    this.sendPendingMessages();
+  }
+  adapterDidUpdateSupportedComponents() {
+    if (this.adapter) {
+      document.documentElement.dataset.bridgeComponents = this.adapter.supportedComponents.join(" ");
+    }
+  }
+  savePendingMessage(message) {
+    this.pendingMessages.push(message);
+  }
+  sendPendingMessages() {
+    this.pendingMessages.forEach((message) => this.send(message));
+    this.pendingMessages = [];
+  }
+};
+
+// node_modules/stimulus/dist/stimulus.js
+function camelize(value) {
+  return value.replace(/(?:[_-])([a-z0-9])/g, (_, char) => char.toUpperCase());
+}
+function namespaceCamelize(value) {
+  return camelize(value.replace(/--/g, "-").replace(/__/g, "_"));
+}
+function capitalize(value) {
+  return value.charAt(0).toUpperCase() + value.slice(1);
+}
+function dasherize(value) {
+  return value.replace(/([A-Z])/g, (_, char) => `-${char.toLowerCase()}`);
+}
+function readInheritableStaticArrayValues(constructor, propertyName) {
+  const ancestors = getAncestorsForConstructor(constructor);
+  return Array.from(ancestors.reduce((values, constructor2) => {
+    getOwnStaticArrayValues(constructor2, propertyName).forEach((name) => values.add(name));
+    return values;
+  }, /* @__PURE__ */ new Set()));
+}
+function readInheritableStaticObjectPairs(constructor, propertyName) {
+  const ancestors = getAncestorsForConstructor(constructor);
+  return ancestors.reduce((pairs, constructor2) => {
+    pairs.push(...getOwnStaticObjectPairs(constructor2, propertyName));
+    return pairs;
+  }, []);
+}
+function getAncestorsForConstructor(constructor) {
+  const ancestors = [];
+  while (constructor) {
+    ancestors.push(constructor);
+    constructor = Object.getPrototypeOf(constructor);
+  }
+  return ancestors.reverse();
+}
+function getOwnStaticArrayValues(constructor, propertyName) {
+  const definition = constructor[propertyName];
+  return Array.isArray(definition) ? definition : [];
+}
+function getOwnStaticObjectPairs(constructor, propertyName) {
+  const definition = constructor[propertyName];
+  return definition ? Object.keys(definition).map((key) => [key, definition[key]]) : [];
+}
+var getOwnKeys = (() => {
+  if (typeof Object.getOwnPropertySymbols == "function") {
+    return (object) => [...Object.getOwnPropertyNames(object), ...Object.getOwnPropertySymbols(object)];
+  } else {
+    return Object.getOwnPropertyNames;
+  }
+})();
+var extend = (() => {
+  function extendWithReflect(constructor) {
+    function extended() {
+      return Reflect.construct(constructor, arguments, new.target);
+    }
+    extended.prototype = Object.create(constructor.prototype, {
+      constructor: { value: extended }
+    });
+    Reflect.setPrototypeOf(extended, constructor);
+    return extended;
+  }
+  function testReflectExtension() {
+    const a = function() {
+      this.a.call(this);
+    };
+    const b = extendWithReflect(a);
+    b.prototype.a = function() {
+    };
+    return new b();
+  }
+  try {
+    testReflectExtension();
+    return extendWithReflect;
+  } catch (error) {
+    return (constructor) => class extended extends constructor {
+    };
+  }
+})();
+var defaultSchema = {
+  controllerAttribute: "data-controller",
+  actionAttribute: "data-action",
+  targetAttribute: "data-target",
+  targetAttributeForScope: (identifier) => `data-${identifier}-target`,
+  outletAttributeForScope: (identifier, outlet) => `data-${identifier}-${outlet}-outlet`,
+  keyMappings: Object.assign(Object.assign({ enter: "Enter", tab: "Tab", esc: "Escape", space: " ", up: "ArrowUp", down: "ArrowDown", left: "ArrowLeft", right: "ArrowRight", home: "Home", end: "End" }, objectFromEntries("abcdefghijklmnopqrstuvwxyz".split("").map((c) => [c, c]))), objectFromEntries("0123456789".split("").map((n) => [n, n])))
+};
+function objectFromEntries(array) {
+  return array.reduce((memo, [k, v]) => Object.assign(Object.assign({}, memo), { [k]: v }), {});
+}
+function ClassPropertiesBlessing(constructor) {
+  const classes = readInheritableStaticArrayValues(constructor, "classes");
+  return classes.reduce((properties, classDefinition) => {
+    return Object.assign(properties, propertiesForClassDefinition(classDefinition));
+  }, {});
+}
+function propertiesForClassDefinition(key) {
+  return {
+    [`${key}Class`]: {
+      get() {
+        const { classes } = this;
+        if (classes.has(key)) {
+          return classes.get(key);
+        } else {
+          const attribute = classes.getAttributeName(key);
+          throw new Error(`Missing attribute "${attribute}"`);
+        }
+      }
+    },
+    [`${key}Classes`]: {
+      get() {
+        return this.classes.getAll(key);
+      }
+    },
+    [`has${capitalize(key)}Class`]: {
+      get() {
+        return this.classes.has(key);
+      }
+    }
+  };
+}
+function OutletPropertiesBlessing(constructor) {
+  const outlets = readInheritableStaticArrayValues(constructor, "outlets");
+  return outlets.reduce((properties, outletDefinition) => {
+    return Object.assign(properties, propertiesForOutletDefinition(outletDefinition));
+  }, {});
+}
+function propertiesForOutletDefinition(name) {
+  const camelizedName = namespaceCamelize(name);
+  return {
+    [`${camelizedName}Outlet`]: {
+      get() {
+        const outlet = this.outlets.find(name);
+        if (outlet) {
+          const outletController = this.application.getControllerForElementAndIdentifier(outlet, name);
+          if (outletController) {
+            return outletController;
+          } else {
+            throw new Error(`Missing "data-controller=${name}" attribute on outlet element for "${this.identifier}" controller`);
+          }
+        }
+        throw new Error(`Missing outlet element "${name}" for "${this.identifier}" controller`);
+      }
+    },
+    [`${camelizedName}Outlets`]: {
+      get() {
+        const outlets = this.outlets.findAll(name);
+        if (outlets.length > 0) {
+          return outlets.map((outlet) => {
+            const controller = this.application.getControllerForElementAndIdentifier(outlet, name);
+            if (controller) {
+              return controller;
+            } else {
+              console.warn(`The provided outlet element is missing the outlet controller "${name}" for "${this.identifier}"`, outlet);
+            }
+          }).filter((controller) => controller);
+        }
+        return [];
+      }
+    },
+    [`${camelizedName}OutletElement`]: {
+      get() {
+        const outlet = this.outlets.find(name);
+        if (outlet) {
+          return outlet;
+        } else {
+          throw new Error(`Missing outlet element "${name}" for "${this.identifier}" controller`);
+        }
+      }
+    },
+    [`${camelizedName}OutletElements`]: {
+      get() {
+        return this.outlets.findAll(name);
+      }
+    },
+    [`has${capitalize(camelizedName)}Outlet`]: {
+      get() {
+        return this.outlets.has(name);
+      }
+    }
+  };
+}
+function TargetPropertiesBlessing(constructor) {
+  const targets = readInheritableStaticArrayValues(constructor, "targets");
+  return targets.reduce((properties, targetDefinition) => {
+    return Object.assign(properties, propertiesForTargetDefinition(targetDefinition));
+  }, {});
+}
+function propertiesForTargetDefinition(name) {
+  return {
+    [`${name}Target`]: {
+      get() {
+        const target = this.targets.find(name);
+        if (target) {
+          return target;
+        } else {
+          throw new Error(`Missing target element "${name}" for "${this.identifier}" controller`);
+        }
+      }
+    },
+    [`${name}Targets`]: {
+      get() {
+        return this.targets.findAll(name);
+      }
+    },
+    [`has${capitalize(name)}Target`]: {
+      get() {
+        return this.targets.has(name);
+      }
+    }
+  };
+}
+function ValuePropertiesBlessing(constructor) {
+  const valueDefinitionPairs = readInheritableStaticObjectPairs(constructor, "values");
+  const propertyDescriptorMap = {
+    valueDescriptorMap: {
+      get() {
+        return valueDefinitionPairs.reduce((result, valueDefinitionPair) => {
+          const valueDescriptor = parseValueDefinitionPair(valueDefinitionPair, this.identifier);
+          const attributeName = this.data.getAttributeNameForKey(valueDescriptor.key);
+          return Object.assign(result, { [attributeName]: valueDescriptor });
+        }, {});
+      }
+    }
+  };
+  return valueDefinitionPairs.reduce((properties, valueDefinitionPair) => {
+    return Object.assign(properties, propertiesForValueDefinitionPair(valueDefinitionPair));
+  }, propertyDescriptorMap);
+}
+function propertiesForValueDefinitionPair(valueDefinitionPair, controller) {
+  const definition = parseValueDefinitionPair(valueDefinitionPair, controller);
+  const { key, name, reader: read, writer: write } = definition;
+  return {
+    [name]: {
+      get() {
+        const value = this.data.get(key);
+        if (value !== null) {
+          return read(value);
+        } else {
+          return definition.defaultValue;
+        }
+      },
+      set(value) {
+        if (value === void 0) {
+          this.data.delete(key);
+        } else {
+          this.data.set(key, write(value));
+        }
+      }
+    },
+    [`has${capitalize(name)}`]: {
+      get() {
+        return this.data.has(key) || definition.hasCustomDefaultValue;
+      }
+    }
+  };
+}
+function parseValueDefinitionPair([token, typeDefinition], controller) {
+  return valueDescriptorForTokenAndTypeDefinition({
+    controller,
+    token,
+    typeDefinition
+  });
+}
+function parseValueTypeConstant(constant) {
+  switch (constant) {
+    case Array:
+      return "array";
+    case Boolean:
+      return "boolean";
+    case Number:
+      return "number";
+    case Object:
+      return "object";
+    case String:
+      return "string";
+  }
+}
+function parseValueTypeDefault(defaultValue) {
+  switch (typeof defaultValue) {
+    case "boolean":
+      return "boolean";
+    case "number":
+      return "number";
+    case "string":
+      return "string";
+  }
+  if (Array.isArray(defaultValue))
+    return "array";
+  if (Object.prototype.toString.call(defaultValue) === "[object Object]")
+    return "object";
+}
+function parseValueTypeObject(payload) {
+  const typeFromObject = parseValueTypeConstant(payload.typeObject.type);
+  if (!typeFromObject)
+    return;
+  const defaultValueType = parseValueTypeDefault(payload.typeObject.default);
+  if (typeFromObject !== defaultValueType) {
+    const propertyPath = payload.controller ? `${payload.controller}.${payload.token}` : payload.token;
+    throw new Error(`The specified default value for the Stimulus Value "${propertyPath}" must match the defined type "${typeFromObject}". The provided default value of "${payload.typeObject.default}" is of type "${defaultValueType}".`);
+  }
+  return typeFromObject;
+}
+function parseValueTypeDefinition(payload) {
+  const typeFromObject = parseValueTypeObject({
+    controller: payload.controller,
+    token: payload.token,
+    typeObject: payload.typeDefinition
+  });
+  const typeFromDefaultValue = parseValueTypeDefault(payload.typeDefinition);
+  const typeFromConstant = parseValueTypeConstant(payload.typeDefinition);
+  const type = typeFromObject || typeFromDefaultValue || typeFromConstant;
+  if (type)
+    return type;
+  const propertyPath = payload.controller ? `${payload.controller}.${payload.typeDefinition}` : payload.token;
+  throw new Error(`Unknown value type "${propertyPath}" for "${payload.token}" value`);
+}
+function defaultValueForDefinition(typeDefinition) {
+  const constant = parseValueTypeConstant(typeDefinition);
+  if (constant)
+    return defaultValuesByType[constant];
+  const defaultValue = typeDefinition.default;
+  if (defaultValue !== void 0)
+    return defaultValue;
+  return typeDefinition;
+}
+function valueDescriptorForTokenAndTypeDefinition(payload) {
+  const key = `${dasherize(payload.token)}-value`;
+  const type = parseValueTypeDefinition(payload);
+  return {
+    type,
+    key,
+    name: camelize(key),
+    get defaultValue() {
+      return defaultValueForDefinition(payload.typeDefinition);
+    },
+    get hasCustomDefaultValue() {
+      return parseValueTypeDefault(payload.typeDefinition) !== void 0;
+    },
+    reader: readers[type],
+    writer: writers[type] || writers.default
+  };
+}
+var defaultValuesByType = {
+  get array() {
+    return [];
+  },
+  boolean: false,
+  number: 0,
+  get object() {
+    return {};
+  },
+  string: ""
+};
+var readers = {
+  array(value) {
+    const array = JSON.parse(value);
+    if (!Array.isArray(array)) {
+      throw new TypeError(`expected value of type "array" but instead got value "${value}" of type "${parseValueTypeDefault(array)}"`);
+    }
+    return array;
+  },
+  boolean(value) {
+    return !(value == "0" || String(value).toLowerCase() == "false");
+  },
+  number(value) {
+    return Number(value);
+  },
+  object(value) {
+    const object = JSON.parse(value);
+    if (object === null || typeof object != "object" || Array.isArray(object)) {
+      throw new TypeError(`expected value of type "object" but instead got value "${value}" of type "${parseValueTypeDefault(object)}"`);
+    }
+    return object;
+  },
+  string(value) {
+    return value;
+  }
+};
+var writers = {
+  default: writeString,
+  array: writeJSON,
+  object: writeJSON
+};
+function writeJSON(value) {
+  return JSON.stringify(value);
+}
+function writeString(value) {
+  return `${value}`;
+}
+var Controller = class {
+  constructor(context) {
+    this.context = context;
+  }
+  static get shouldLoad() {
+    return true;
+  }
+  static afterLoad(_identifier, _application) {
+    return;
+  }
+  get application() {
+    return this.context.application;
+  }
+  get scope() {
+    return this.context.scope;
+  }
+  get element() {
+    return this.scope.element;
+  }
+  get identifier() {
+    return this.scope.identifier;
+  }
+  get targets() {
+    return this.scope.targets;
+  }
+  get outlets() {
+    return this.scope.outlets;
+  }
+  get classes() {
+    return this.scope.classes;
+  }
+  get data() {
+    return this.scope.data;
+  }
+  initialize() {
+  }
+  connect() {
+  }
+  disconnect() {
+  }
+  dispatch(eventName, { target = this.element, detail = {}, prefix = this.identifier, bubbles = true, cancelable = true } = {}) {
+    const type = prefix ? `${prefix}:${eventName}` : eventName;
+    const event = new CustomEvent(type, { detail, bubbles, cancelable });
+    target.dispatchEvent(event);
+    return event;
+  }
+};
+Controller.blessings = [
+  ClassPropertiesBlessing,
+  TargetPropertiesBlessing,
+  ValuePropertiesBlessing,
+  OutletPropertiesBlessing
+];
+Controller.targets = [];
+Controller.outlets = [];
+Controller.values = {};
+
+// src/bridge_element.ts
+var BridgeElement = class {
+  constructor(element) {
+    this.element = element;
+  }
+  static makeMenuItems(elements) {
+    return elements.map((element, index) => new BridgeElement(element).menuItem(index)).filter((item) => item);
+  }
+  static makeMenuGroups(elements) {
+    return elements.map((element) => new BridgeElement(element).menuGroup());
+  }
+  get title() {
+    return (this.bridgeAttribute("title") || this.attribute("aria-label") || this.element.textContent || this.element.value).trim();
+  }
+  get icon() {
+    const name = this.bridgeAttribute("icon-name");
+    const url = this.bridgeAttribute(`icon-${this.platform}-url`);
+    if (name || url) {
+      return { name, url };
+    } else {
+      return null;
+    }
+  }
+  get group() {
+    return this.bridgeAttribute("group") || "default";
+  }
+  get style() {
+    return this.bridgeAttribute("style") || "default";
+  }
+  get selected() {
+    return this.bridgeAttribute("selected") === "true";
+  }
+  get filterable() {
+    return this.bridgeAttribute("filterable") === "true";
+  }
+  get enabled() {
+    return !this.disabled;
+  }
+  get disabled() {
+    const disabled = this.bridgeAttribute("disabled");
+    return disabled === "true" || disabled === this.platform;
+  }
+  enableForComponent(component) {
+    if (component.enabled) {
+      this.removeBridgeAttribute("disabled");
+    }
+  }
+  get displayedOnPlatform() {
+    return !this.hasClass(`u-hide@${this.platform}`);
+  }
+  showOnPlatform() {
+    this.element.classList.remove(`u-hide@${this.platform}`);
+  }
+  hideOnPlatform() {
+    this.element.classList.add(`u-hide@${this.platform}`);
+  }
+  get button() {
+    return {
+      title: this.title,
+      icon: this.icon
+    };
+  }
+  menuItem(index) {
+    if (this.disabled)
+      return null;
+    return {
+      title: this.title,
+      style: this.style,
+      groupName: this.group,
+      selected: this.selected,
+      icon: this.icon,
+      index
+    };
+  }
+  menuGroup() {
+    return {
+      title: this.title,
+      name: this.group
+    };
+  }
+  hasClass(className) {
+    return this.element.classList.contains(className);
+  }
+  attribute(name) {
+    return this.element.getAttribute(name);
+  }
+  bridgeAttribute(name) {
+    return this.attribute(`data-bridge-${name}`);
+  }
+  setBridgeAttribute(name, value) {
+    this.element.setAttribute(`data-bridge-${name}`, value);
+  }
+  removeBridgeAttribute(name) {
+    this.element.removeAttribute(`data-bridge-${name}`);
+  }
+  click() {
+    if (this.platform == "android") {
+      this.element.removeAttribute("target");
+    }
+    this.element.click();
+  }
+  get platform() {
+    return document.documentElement.dataset.bridgePlatform;
+  }
+};
+
+// src/component.ts
+var Component = class extends Controller {
+  constructor() {
+    super(...arguments);
+    this.pendingMessageCallbacks = [];
+  }
+  initialize() {
+    this.pendingMessageCallbacks = [];
+  }
+  connect() {
+  }
+  disconnect() {
+    this.removePendingCallbacks();
+    this.removePendingMessages();
+  }
+  get component() {
+    return this.constructor.component;
+  }
+  get platformOptingOut() {
+    const { bridgePlatform } = document.documentElement.dataset;
+    return this.identifier == this.element.getAttribute(`data-controller-optout-${bridgePlatform}`);
+  }
+  get enabled() {
+    return !this.platformOptingOut && this.bridge.supportsComponent(this.component);
+  }
+  send(event, data = {}, callback) {
+    data.metadata = {
+      url: window.location.href
+    };
+    const message = { component: this.component, event, data, callback };
+    const messageId = this.bridge.send(message);
+    if (callback) {
+      this.pendingMessageCallbacks.push(messageId);
+    }
+  }
+  removePendingCallbacks() {
+    this.pendingMessageCallbacks.forEach((messageId) => this.bridge.removeCallbackFor(messageId));
+  }
+  removePendingMessages() {
+    this.bridge.removePendingMessagesFor(this.component);
+  }
+  get bridgeElement() {
+    return new BridgeElement(this.element);
+  }
+  get bridge() {
+    return window.Strada.web;
+  }
+};
+Component.component = "";
+
+// src/index.ts
+if (!window.Strada) {
+  const webBridge = new Bridge();
+  window.Strada = { web: webBridge };
+  webBridge.start();
+}
+export {
+  BridgeElement,
+  Component
+};
