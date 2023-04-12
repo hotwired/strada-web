@@ -2,13 +2,13 @@ import { Controller } from "stimulus"
 import { Bridge } from "./bridge"
 import { BridgeElement } from "./bridge_element"
 import { MessageCallback } from "./helpers/types"
-import { isStradaMobileApp } from "./helpers/user_agent"
+import { isStradaNativeApp } from "./helpers/user_agent"
 
 export class BridgeComponent extends Controller {
   static component = ""
 
   static get shouldLoad() {
-    return isStradaMobileApp
+    return isStradaNativeApp
   }
 
   pendingMessageCallbacks: Array<any> = []

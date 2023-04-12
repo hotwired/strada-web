@@ -1,3 +1,3 @@
 const { userAgent } = window.navigator
 
-export const isStradaMobileApp = /bridge-components: \[.+\]/.test(userAgent)
+export const isStradaNativeApp = /bridge-components: \[.+\]/.test(userAgent)
