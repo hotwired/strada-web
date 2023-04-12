@@ -9,6 +9,7 @@
     "noUnusedLocals": true,
     "rootDir": "src",
     "outDir": "build",
+    "noEmit": true,
     "sourceMap": true,
     "strict": true,
     "target": "es2017",
