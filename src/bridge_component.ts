@@ -4,7 +4,7 @@ import { BridgeElement } from "./bridge_element"
 import { MessageCallback } from "./helpers/types"
 import { isStradaMobileApp } from "./helpers/user_agent"
 
-export class Component extends Controller {
+export class BridgeComponent extends Controller {
   static component = ""
 
   static get shouldLoad() {
@@ -25,7 +25,7 @@ export class Component extends Controller {
   }
 
   get component() {
-    return (this.constructor as typeof Component).component
+    return (this.constructor as typeof BridgeComponent).component
   }
 
   get platformOptingOut() {

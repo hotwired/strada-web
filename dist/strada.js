@@ -531,35 +531,8 @@ var BridgeElement = class {
   constructor(element) {
     this.element = element;
   }
-  static makeMenuItems(elements) {
-    return elements.map((element, index) => new BridgeElement(element).menuItem(index)).filter((item) => item);
-  }
-  static makeMenuGroups(elements) {
-    return elements.map((element) => new BridgeElement(element).menuGroup());
-  }
   get title() {
     return (this.bridgeAttribute("title") || this.attribute("aria-label") || this.element.textContent || this.element.value).trim();
-  }
-  get icon() {
-    const name = this.bridgeAttribute("icon-name");
-    const url = this.bridgeAttribute(`icon-${this.platform}-url`);
-    if (name || url) {
-      return { name, url };
-    } else {
-      return null;
-    }
-  }
-  get group() {
-    return this.bridgeAttribute("group") || "default";
-  }
-  get style() {
-    return this.bridgeAttribute("style") || "default";
-  }
-  get selected() {
-    return this.bridgeAttribute("selected") === "true";
-  }
-  get filterable() {
-    return this.bridgeAttribute("filterable") === "true";
   }
   get enabled() {
     return !this.disabled;
@@ -572,39 +545,6 @@ var BridgeElement = class {
     if (component.enabled) {
       this.removeBridgeAttribute("disabled");
     }
-  }
-  get displayedOnPlatform() {
-    return !this.hasClass(`u-hide@${this.platform}`);
-  }
-  showOnPlatform() {
-    this.element.classList.remove(`u-hide@${this.platform}`);
-  }
-  hideOnPlatform() {
-    this.element.classList.add(`u-hide@${this.platform}`);
-  }
-  get button() {
-    return {
-      title: this.title,
-      icon: this.icon
-    };
-  }
-  menuItem(index) {
-    if (this.disabled)
-      return null;
-    return {
-      title: this.title,
-      style: this.style,
-      groupName: this.group,
-      selected: this.selected,
-      icon: this.icon,
-      index
-    };
-  }
-  menuGroup() {
-    return {
-      title: this.title,
-      name: this.group
-    };
   }
   hasClass(className) {
     return this.element.classList.contains(className);
@@ -636,8 +576,8 @@ var BridgeElement = class {
 var { userAgent } = window.navigator;
 var isStradaMobileApp = /bridge-components: \[.+\]/.test(userAgent);
 
-// src/component.ts
-var Component = class extends Controller {
+// src/bridge_component.ts
+var BridgeComponent = class extends Controller {
   constructor() {
     super(...arguments);
     this.pendingMessageCallbacks = [];
@@ -687,7 +627,7 @@ var Component = class extends Controller {
     return window.Strada.web;
   }
 };
-Component.component = "";
+BridgeComponent.component = "";
 
 // src/index.ts
 if (!window.Strada) {
@@ -696,6 +636,6 @@ if (!window.Strada) {
   webBridge.start();
 }
 export {
-  BridgeElement,
-  Component
+  BridgeComponent,
+  BridgeElement
 };
