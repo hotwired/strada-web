@@ -572,11 +572,18 @@ var BridgeElement = class {
   }
 };
 
+// src/helpers/user_agent.ts
+var { userAgent } = window.navigator;
+var isStradaNativeApp = /bridge-components: \[.+\]/.test(userAgent);
+
 // src/bridge_component.ts
 var BridgeComponent = class extends Controller {
   constructor() {
     super(...arguments);
     this.pendingMessageCallbacks = [];
+  }
+  static get shouldLoad() {
+    return isStradaNativeApp;
   }
   initialize() {
     this.pendingMessageCallbacks = [];
