@@ -7,14 +7,6 @@ export class BridgeElement {
     this.element = element
   }
 
-  static makeMenuItems(elements: Element[]) {
-    return elements.map((element, index) => new BridgeElement(element).menuItem(index)).filter(item => item)
-  }
-
-  static makeMenuGroups(elements: Element[]) {
-    return elements.map(element => new BridgeElement(element).menuGroup())
-  }
-
   get title() {
     return (
       this.bridgeAttribute("title") ||
@@ -22,33 +14,6 @@ export class BridgeElement {
       this.element.textContent ||
       (<HTMLInputElement>this.element).value
     ).trim()
-  }
-
-  get icon() {
-    const name = this.bridgeAttribute("icon-name")
-    const url = this.bridgeAttribute(`icon-${this.platform}-url`)
-
-    if (name || url) {
-      return { name, url }
-    } else {
-      return null
-    }
-  }
-
-  get group() {
-    return this.bridgeAttribute("group") || "default"
-  }
-
-  get style() {
-    return this.bridgeAttribute("style") || "default"
-  }
-
-  get selected() {
-    return this.bridgeAttribute("selected") === "true"
-  }
-
-  get filterable() {
-    return this.bridgeAttribute("filterable") === "true"
   }
 
   get enabled() {
@@ -63,45 +28,6 @@ export class BridgeElement {
   enableForComponent(component: Component) {
     if (component.enabled) {
       this.removeBridgeAttribute("disabled")
-    }
-  }
-
-  get displayedOnPlatform() {
-    return !this.hasClass(`u-hide@${this.platform}`)
-  }
-
-  showOnPlatform() {
-    this.element.classList.remove(`u-hide@${this.platform}`)
-  }
-
-  hideOnPlatform() {
-    this.element.classList.add(`u-hide@${this.platform}`)
-  }
-
-  get button() {
-    return {
-      title: this.title,
-      icon: this.icon
-    }
-  }
-
-  menuItem(index: number) {
-    if (this.disabled) return null
-
-    return {
-      title: this.title,
-      style: this.style,
-      groupName: this.group,
-      selected: this.selected,
-      icon: this.icon,
-      index: index
-    }
-  }
-
-  menuGroup() {
-    return {
-      title: this.title,
-      name: this.group
     }
   }
 
