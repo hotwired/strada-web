@@ -572,8 +572,8 @@ var BridgeElement = class {
   }
 };
 
-// src/component.ts
-var Component = class extends Controller {
+// src/bridge_component.ts
+var BridgeComponent = class extends Controller {
   constructor() {
     super(...arguments);
     this.pendingMessageCallbacks = [];
@@ -620,7 +620,7 @@ var Component = class extends Controller {
     return window.Strada.web;
   }
 };
-Component.component = "";
+BridgeComponent.component = "";
 
 // src/index.ts
 if (!window.Strada) {
@@ -629,6 +629,6 @@ if (!window.Strada) {
   webBridge.start();
 }
 export {
-  BridgeElement,
-  Component
+  BridgeComponent,
+  BridgeElement
 };

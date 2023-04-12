@@ -1,4 +1,4 @@
-import { Component } from "./component"
+import { BridgeComponent } from "./bridge_component"
 
 export class BridgeElement {
   element: Element
@@ -25,7 +25,7 @@ export class BridgeElement {
     return disabled === "true" || disabled === this.platform
   }
 
-  enableForComponent(component: Component) {
+  enableForComponent(component: BridgeComponent) {
     if (component.enabled) {
       this.removeBridgeAttribute("disabled")
     }

@@ -1,5 +1,5 @@
 import { Bridge } from "./bridge"
-export { Component } from "./component"
+export { BridgeComponent } from "./bridge_component"
 export { BridgeElement } from "./bridge_element"
 
 declare global {
