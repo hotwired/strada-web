@@ -3,13 +3,13 @@
 const esbuild = require("esbuild")
 const package = require("../package.json")
 const year = new Date().getFullYear()
-const banner = `/*\nStrada ${package.version}\nCopyright © ${year} Basecamp, LLC\n*/`
+const banner = `/*\nStrada ${package.version}\nCopyright © ${year} 37signals, LLC\n*/`
 
 const options = {
   entryPoints: ["src/index.ts"],
   bundle: true,
-  minify: true,
-  banner: banner,
+  minify: false,
+  banner: { js: banner },
   format: 'esm',
   outfile: "dist/strada.js",
 }

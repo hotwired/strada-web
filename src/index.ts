@@ -1,5 +1,6 @@
 import { Bridge } from "./bridge"
 export { Component } from "./component"
+export { BridgeElement } from "./bridge_element"
 
 declare global {
   interface Window {
