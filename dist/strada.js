@@ -632,11 +632,18 @@ var BridgeElement = class {
   }
 };
 
+// src/helpers/user_agent.ts
+var { userAgent } = window.navigator;
+var isStradaMobileApp = /bridge-components: \[(.+)\]/.test(userAgent);
+
 // src/component.ts
 var Component = class extends Controller {
   constructor() {
     super(...arguments);
     this.pendingMessageCallbacks = [];
+  }
+  static get shouldLoad() {
+    return isStradaMobileApp;
   }
   initialize() {
     this.pendingMessageCallbacks = [];
