@@ -1,9 +1,7 @@
 import { BridgeComponent } from "./bridge_component"
 
 export class BridgeElement {
-  element: Element
-
-  constructor(element: Element) {
+  constructor(element) {
     this.element = element
   }
 
@@ -12,7 +10,7 @@ export class BridgeElement {
       this.bridgeAttribute("title") ||
       this.attribute("aria-label") ||
       this.element.textContent ||
-      (<HTMLInputElement>this.element).value
+      this.element.value
     ).trim()
   }
 
@@ -25,29 +23,29 @@ export class BridgeElement {
     return disabled === "true" || disabled === this.platform
   }
 
-  enableForComponent(component: BridgeComponent) {
+  enableForComponent(component) {
     if (component.enabled) {
       this.removeBridgeAttribute("disabled")
     }
   }
 
-  hasClass(className: string) {
+  hasClass(className) {
     return this.element.classList.contains(className)
   }
 
-  attribute(name: string) {
+  attribute(name) {
     return this.element.getAttribute(name)
   }
 
-  bridgeAttribute(name: string) {
+  bridgeAttribute(name) {
     return this.attribute(`data-bridge-${name}`)
   }
 
-  setBridgeAttribute(name: string, value: any) {
+  setBridgeAttribute(name, value) {
     this.element.setAttribute(`data-bridge-${name}`, value)
   }
 
-  removeBridgeAttribute(name: string) {
+  removeBridgeAttribute(name) {
     this.element.removeAttribute(`data-bridge-${name}`)
   }
 
@@ -59,7 +57,7 @@ export class BridgeElement {
       this.element.removeAttribute("target")
     }
 
-    (<HTMLElement>this.element).click()
+    this.element.click()
   }
 
   get platform() {
