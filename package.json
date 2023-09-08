@@ -1,7 +1,7 @@
 {
   "name": "@hotwired/strada",
   "version": "0.9.3",
-  "main": "dist/strada.umd.js",
+  "main": "dist/strada.js",
   "files": [
     "dist"
   ],
