@@ -14,8 +14,7 @@
     "build": "bin/build.js"
   },
   "devDependencies": {
-    "esbuild": "^0.17.16",
-    "typescript": "^5.0.4"
+    "esbuild": "^0.17.16"
   },
   "peerDependencies": {
     "@hotwired/stimulus": "^3.2.1"
