@@ -1,7 +1,5 @@
-import { Controller } from "stimulus"
-import { Bridge } from "./bridge"
+import { Controller } from "@hotwired/stimulus"
 import { BridgeElement } from "./bridge_element"
-import { MessageCallback } from "./helpers/types"
 import { isStradaNativeApp } from "./helpers/user_agent"
 
 export class BridgeComponent extends Controller {
@@ -11,7 +9,7 @@ export class BridgeComponent extends Controller {
     return isStradaNativeApp
   }
 
-  pendingMessageCallbacks: Array<any> = []
+  pendingMessageCallbacks = []
 
   initialize() {
     this.pendingMessageCallbacks = []
@@ -25,7 +23,7 @@ export class BridgeComponent extends Controller {
   }
 
   get component() {
-    return (this.constructor as typeof BridgeComponent).component
+    return this.constructor.component
   }
 
   get platformOptingOut() {
@@ -43,7 +41,7 @@ export class BridgeComponent extends Controller {
     )
   }
 
-  send(event: any, data: any = {}, callback: MessageCallback | null) {
+  send(event, data = {}, callback) {
     // Include the url with each message, so the native app can
     // ensure messages are delivered to the correct destination
     data.metadata = {
@@ -70,7 +68,7 @@ export class BridgeComponent extends Controller {
     return new BridgeElement(this.element)
   }
 
-  get bridge(): Bridge {
+  get bridge() {
     return window.Strada.web
   }
 }

@@ -11,14 +11,12 @@
   "scripts": {
     "clean": "rm -rf build/* dist/*",
     "prebuild": "npm run clean",
-    "build": "tsc && bin/build.js"
+    "build": "bin/build.js"
   },
   "devDependencies": {
-    "esbuild": "^0.17.16",
-    "tslib": "^2.0.3",
-    "typescript": "^5.0.4"
+    "esbuild": "^0.17.16"
   },
-  "dependencies": {
-    "stimulus": "^3.2.1"
+  "peerDependencies": {
+    "@hotwired/stimulus": "^3.2.1"
   }
 }

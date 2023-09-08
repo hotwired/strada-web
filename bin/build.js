@@ -6,10 +6,11 @@ const year = new Date().getFullYear()
 const banner = `/*\nStrada ${package.version}\nCopyright © ${year} 37signals, LLC\n*/`
 
 const options = {
-  entryPoints: ["src/index.ts"],
+  entryPoints: ["src/index.js"],
   bundle: true,
   minify: false,
   banner: { js: banner },
+  external: ["@hotwired/stimulus"],
   format: 'esm',
   outfile: "dist/strada.js",
 }
