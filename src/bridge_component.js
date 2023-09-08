@@ -1,4 +1,4 @@
-import { Controller } from "stimulus"
+import { Controller } from "@hotwired/stimulus"
 import { BridgeElement } from "./bridge_element"
 import { isStradaNativeApp } from "./helpers/user_agent"
 

@@ -10,6 +10,7 @@ const options = {
   bundle: true,
   minify: false,
   banner: { js: banner },
+  external: ["@hotwired/stimulus"],
   format: 'esm',
   outfile: "dist/strada.js",
 }

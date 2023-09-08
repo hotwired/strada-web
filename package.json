@@ -17,7 +17,7 @@
     "esbuild": "^0.17.16",
     "typescript": "^5.0.4"
   },
-  "dependencies": {
-    "stimulus": "^3.2.1"
+  "peerDependencies": {
+    "@hotwired/stimulus": "^3.2.1"
   }
 }
