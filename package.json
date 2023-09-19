@@ -1,17 +1,35 @@
 {
   "name": "@hotwired/strada",
-  "version": "0.9.3",
+  "version": "1.0.0-beta1",
+  "description": "Create fully native controls, driven by your web app.",
   "main": "dist/strada.js",
   "files": [
-    "dist"
+    "dist/*.js"
   ],
-  "repository": "git://github.com/hotwired/strada-web.git",
-  "author": "37signals, LLC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hotwired/strada-web.git"
+  },
+  "keywords": [
+    "hotwire",
+    "strada"
+  ],
+  "author": "37signals LLC",
+  "contributors": [
+    "Jay Ohms <jay@37signals.com>"
+  ],
   "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/hotwired/strada-web/issues"
+  },
+  "homepage": "https://strada.hotwired.dev",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "clean": "rm -rf build/* dist/*",
-    "prebuild": "npm run clean",
-    "build": "bin/build.js"
+    "build": "bin/build.js",
+    "release": "yarn build && npm publish"
   },
   "devDependencies": {
     "esbuild": "^0.17.16"

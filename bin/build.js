@@ -3,7 +3,7 @@
 const esbuild = require("esbuild")
 const package = require("../package.json")
 const year = new Date().getFullYear()
-const banner = `/*\nStrada ${package.version}\nCopyright © ${year} 37signals, LLC\n*/`
+const banner = `/*\nStrada ${package.version}\nCopyright © ${year} 37signals LLC\n*/`
 
 const options = {
   entryPoints: ["src/index.js"],
