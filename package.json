@@ -1,6 +1,6 @@
 {
   "name": "@hotwired/strada",
-  "version": "1.0.0-beta01",
+  "version": "1.0.0-beta1",
   "description": "Create fully native controls, driven by your web app.",
   "main": "dist/strada.js",
   "files": [
