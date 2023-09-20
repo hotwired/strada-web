@@ -1,14 +1,9 @@
 export class Bridge {
-  #adapter
-  #lastMessageId
-  #pendingMessages
-  #pendingCallbacks
-
   constructor() {
-    this.#adapter = null
-    this.#lastMessageId = 0
-    this.#pendingMessages = []
-    this.#pendingCallbacks = new Map()
+    this.adapter = null
+    this.lastMessageId = 0
+    this.pendingMessages = []
+    this.pendingCallbacks = new Map()
   }
 
   start() {
@@ -20,16 +15,16 @@ export class Bridge {
   }
 
   supportsComponent(component) {
-    if (this.#adapter) {
-      return this.#adapter.supportsComponent(component)
+    if (this.adapter) {
+      return this.adapter.supportsComponent(component)
     } else {
       return false
     }
   }
 
   send({ component, event, data, callback }) {
-    if (!this.#adapter) {
-      this.#savePendingMessage({ component, event, data, callback })
+    if (!this.adapter) {
+      this.savePendingMessage({ component, event, data, callback })
       return null
     }
 
@@ -37,10 +32,10 @@ export class Bridge {
 
     const id = this.generateMessageId()
     const message = { id: id, component: component, event: event, data: data || {} }
-    this.#adapter.receive(message)
+    this.adapter.receive(message)
 
     if (callback) {
-      this.#pendingCallbacks.set(id, callback)
+      this.pendingCallbacks.set(id, callback)
     }
 
     return id
@@ -51,48 +46,50 @@ export class Bridge {
   }
 
   executeCallbackFor(message) {
-    const callback = this.#pendingCallbacks.get(message.id)
+    const callback = this.pendingCallbacks.get(message.id)
     if (callback) {
       callback(message)
     }
   }
 
   removeCallbackFor(messageId) {
-    if (this.#pendingCallbacks.has(messageId)) {
-      this.#pendingCallbacks.delete(messageId)
+    if (this.pendingCallbacks.has(messageId)) {
+      this.pendingCallbacks.delete(messageId)
     }
   }
 
   removePendingMessagesFor(component) {
-    this.#pendingMessages = this.#pendingMessages.filter(message => message.component != component)
+    this.pendingMessages = this.pendingMessages.filter(message => message.component != component)
   }
 
   generateMessageId() {
-    const id = ++this.#lastMessageId
+    const id = ++this.lastMessageId
     return id.toString()
   }
 
   setAdapter(adapter) {
-    this.#adapter = adapter
+    this.adapter = adapter
 
     // Configure <html> attributes
-    document.documentElement.dataset.bridgePlatform = this.#adapter.platform
+    document.documentElement.dataset.bridgePlatform = this.adapter.platform
     this.adapterDidUpdateSupportedComponents()
-    this.#sendPendingMessages()
+    this.sendPendingMessages()
   }
 
   adapterDidUpdateSupportedComponents() {
-    if (this.#adapter) {
-      document.documentElement.dataset.bridgeComponents = this.#adapter.supportedComponents.join(" ")
+    if (this.adapter) {
+      document.documentElement.dataset.bridgeComponents = this.adapter.supportedComponents.join(" ")
     }
   }
 
-  #savePendingMessage(message) {
-    this.#pendingMessages.push(message)
+  // Private
+
+  savePendingMessage(message) {
+    this.pendingMessages.push(message)
   }
 
-  #sendPendingMessages() {
-    this.#pendingMessages.forEach(message => this.send(message))
-    this.#pendingMessages = []
+  sendPendingMessages() {
+    this.pendingMessages.forEach(message => this.send(message))
+    this.pendingMessages = []
   }
 }
