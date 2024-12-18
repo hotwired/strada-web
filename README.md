@@ -1,3 +1,8 @@
+> [!IMPORTANT]
+> [Hotwire Native](https://native.hotwired.dev) is the new consolidation of the Turbo Native and Strada libraries into a single framework for iOS and Android. For new development, start with the new Hotwire Native libraries, which is built on the Turbo Native foundation and offers many new features. For existing Turbo Native apps, please transition to Hotwire Native as soon as possible.
+>
+> No new features will be added to this library and it will be deprecated in the coming months.
+
 # Strada
 
 [Strada](https://strada.hotwired.dev) enables you to create native controls in your hybrid mobile apps, driven by the web. Build web components and native components that work together in `WebView` screens to elevate your [Turbo Native](https://turbo.hotwired.dev/handbook/native) apps to the next level.
