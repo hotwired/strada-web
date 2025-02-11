@@ -32,7 +32,7 @@
     "release": "yarn build && npm publish"
   },
   "devDependencies": {
-    "esbuild": "^0.17.16"
+    "esbuild": "^0.25.0"
   },
   "peerDependencies": {
     "@hotwired/stimulus": "^3.2.1"
